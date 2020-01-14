@@ -1,0 +1,13 @@
+{
+  "name": "{{mod_name}}",
+  "version": "{{version}}",
+  "factorio_version": "{{factorio_version}}",
+  "title": "Event Data Validator",
+  "author": "JanSharp",
+  "contact": "",
+  "homepage": "",
+  "description": "???",
+  "dependencies": [
+
+  ]
+}

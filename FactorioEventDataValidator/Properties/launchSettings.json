@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FactorioEventDataValidator": {
+      "commandName": "Project",
+      "commandLineArgs": "0.17.79"
+    }
+  }
+}
