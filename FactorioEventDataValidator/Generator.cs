@@ -14,13 +14,15 @@ namespace FactorioEventDataValidator
         public const string SourceLuaDir = "../../../Lua";
         public const string TargetLuaDir = "FinishedMod";
         public const string ModName = "EventDataValidator";
+        public const string ValidatorFile = "validator.lua";
         public const string ValidatorsFile = "validators.lua";
         public const string InfoFile = "info.json";
         public static readonly List<string> IncludeFiles = new List<string>()
         {
             ".vscode/launch.json",
             ".vscode/settings.json",
-            "validator.lua",
+            "filters.lua",
+            "all-entity-types.lua",
             "LICENSE",
         };
         
@@ -55,14 +57,33 @@ namespace FactorioEventDataValidator
             contentTypes = contentTypes.Distinct().ToList();
 
 
-
             DirectoryInfo sourceDir = new DirectoryInfo(SourceLuaDir);
             DirectoryInfo targetDir = new DirectoryInfo(Path.Combine(TargetLuaDir, ModName + "_" + gameVersion));
+            if (!targetDir.Exists)
+                targetDir.Create();
+
+            string validatorSource = File.ReadAllText(Path.Combine(sourceDir.FullName, ValidatorFile));
+            validatorSource = PreProcess(validatorSource);
+            StringBuilder sb = new StringBuilder();
+            Resolve(sb, validatorSource, new List<(Dictionary<string, string> labels, Resolver subResolver)>()
+            {
+                (new Dictionary<string, string>(), t => t switch
+                {
+                    "ignore_event" => events.Where(ed => ed.contents.Count == 0).Select(ed => (new Dictionary<string, string>()
+                    {
+                        { "event_name", ed.name },
+                    },
+                    (Resolver)null)).ToList(),
+
+                    _ => throw new Exception("You sir have a tag '" + t + "' which is invalid, please elaborate."),
+                })
+            });
+            File.WriteAllText(Path.Combine(targetDir.FullName, ValidatorFile), RemoveTrailingSpaces(sb.ToString()));
+            sb.Clear();
 
             string validatorsSource = File.ReadAllText(Path.Combine(sourceDir.FullName, ValidatorsFile));
             validatorsSource = PreProcess(validatorsSource);
-            StringBuilder validatorsResult = new StringBuilder();
-            Resolve(validatorsResult, validatorsSource, new List<(Dictionary<string, string> labels, Resolver subResolver)>()
+            Resolve(sb, validatorsSource, new List<(Dictionary<string, string> labels, Resolver subResolver)>()
             {
                 (new Dictionary<string, string>(), t => t switch
                 {
@@ -73,38 +94,47 @@ namespace FactorioEventDataValidator
                     },
                     ct.Resolver)).ToList(),
 
-                    "event_validator" => events.Select(ed => (new Dictionary<string, string>()
+                    "event_validator" => events.Where(ed => ed.contents.Count != 0).Select(ed => (new Dictionary<string, string>()
                     {
                         { "event_name", ed.name },
                     },
-                    (Resolver)(t2 => t2 switch
+                    (Resolver)(t2 =>
                     {
-                        "field" => ed.contents.Select(ec => (new Dictionary<string, string>()
+                        List<(Dictionary<string, string> labels, Resolver subResolver)> result;
+                        switch (t2)
                         {
-                            { "field_name", ec.name },
-                            { "field_type_id", ec.type.Id },
-                            { "field_type_name", ec.type.readableName },
-                        },
-                        (Resolver)(t3 => t3 switch
-                        {
-                            "required" => ec.optional ? null : new List<(Dictionary<string, string> labels, Resolver subResolver)>() { (null, null) },
-                            "optional" => ec.optional ? new List<(Dictionary<string, string> labels, Resolver subResolver)>() { (null, null) } : null,
-                            _ => null,
-                        })
-                        )).ToList(),
-
-                        _ => null,
+                            case "field":
+                                result = ed.contents.Select(ec => (new Dictionary<string, string>()
+                                {
+                                    { "field_name", ec.name },
+                                    { "field_type_id", ec.type.Id },
+                                    { "field_type_name", ec.type.readableName },
+                                },
+                                (Resolver)(t3 => t3 switch
+                                {
+                                    "required" => ec.optional ? null : new List<(Dictionary<string, string> labels, Resolver subResolver)>() { (null, null) },
+                                    "optional" => ec.optional ? new List<(Dictionary<string, string> labels, Resolver subResolver)>() { (null, null) } : null,
+                                    _ => null,
+                                })
+                                )).ToList();
+                                break;
+                            default:
+                                if (ed.eventSpecificResolvers.ContainsKey(t2))
+                                    result = ed.eventSpecificResolvers[t2];
+                                else
+                                    result = null;
+                                break;
+                        };
+                        return result;
                     })
                     )).ToList(),
 
-                    _ => throw new Exception("Impossible!"),
+                    _ => throw new Exception("You sir have a tag '" + t + "' which is invalid, please elaborate."),
                 })
             });
-            string validatorsResultStr = PostProcess(validatorsResult.ToString());
+            File.WriteAllText(Path.Combine(targetDir.FullName, ValidatorsFile), RemoveBlankLines(RemoveTrailingSpaces(sb.ToString())));
+            sb.Clear();
 
-            if (!targetDir.Exists)
-                targetDir.Create();
-            File.WriteAllText(Path.Combine(targetDir.FullName, ValidatorsFile), validatorsResultStr);
             File.WriteAllText(
                 Path.Combine(targetDir.FullName, InfoFile),
                 File.ReadAllText(Path.Combine(sourceDir.FullName, InfoFile))
@@ -128,10 +158,13 @@ namespace FactorioEventDataValidator
         static readonly Regex PreProcessRegex = new Regex(@"--\[\[!(.*?)\]\].*?--\[\[!\]\]", RegexOptions.Singleline | RegexOptions.Compiled);
         static string PreProcess(string source) => PreProcessRegex.Replace(source, @"$1");
 
-        static readonly Regex PostProcessRegex = new Regex(@"^\s*?\n", RegexOptions.Multiline | RegexOptions.Compiled);
-        static string PostProcess(string source) => PostProcessRegex.Replace(source, ""); // delete blank lines
+        static readonly Regex RemoveBlankLinesRegex = new Regex(@"^\s*?\n", RegexOptions.Multiline | RegexOptions.Compiled);
+        static string RemoveBlankLines(string source) => RemoveBlankLinesRegex.Replace(source, "");
 
-        static readonly Regex ResolveRegex = new Regex(@"\G(?<text>.*?)(?:--<(?<tag>[^>]+)>(?<tagContent>.*?)--</\k<tag>>|\z)", RegexOptions.Singleline | RegexOptions.Compiled);
+        static readonly Regex RemoveTrailingSpacesRegex = new Regex(@"[^\n\S]+\n", RegexOptions.RightToLeft | RegexOptions.Compiled);
+        static string RemoveTrailingSpaces(string source) => RemoveTrailingSpacesRegex.Replace(source, "\n");
+
+        static readonly Regex ResolveRegex = new Regex(@"\G(?<text>.*?)(?:--<\s*(?<tag>\w+)(?>\s+(?<attribute>\w+)=\u0022(?<attrValue>[^\u0022]*)\u0022)*\s*(?:/>|>\s*(?<tagContent>.*?)--</\k<tag>>)|\z)", RegexOptions.Singleline | RegexOptions.Compiled);
         static void Resolve(StringBuilder sb, string toResolve, List<(Dictionary<string, string> labels, Resolver subResolver)> resolveData)
         {
             foreach (var itemResolveData in resolveData ?? new List<(Dictionary<string, string> labels, Resolver subResolver)>())

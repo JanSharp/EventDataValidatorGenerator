@@ -335,7 +335,7 @@
 <!ENTITY Dagger   "&#8225;"  >
 <!ENTITY permil   "&#8240;"  >
 <!ENTITY lsaquo   "&#8249;"  >
-<!ENTITY rsaquo   "&#8250;"  >]><html lang="en"><head ><title >Defines</title><meta charset="UTF-8"/><link rel="stylesheet" type="text/css" href="lua-doc.css"/><script rel="stylesheet" type="text/javascript" src="lua-doc.js"></script></head><body ><div class="navigation-bar"><span class="navigation"><a href="index.html">Factorio</a> &raquo; Defines</span><span class="version">Factorio 0.17.79</span></div><h1 >Defines</h1><div class="brief-listing"><table class="brief-members"><tr ><td class="header"><a href="defines.html#defines.alert_type">alert_type</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.behavior_result">behavior_result</a></td><td class="description"> AI command exit status. See <a href="LuaEntity.html#LuaEntity.set_command">LuaEntity::set_command</a>
+<!ENTITY rsaquo   "&#8250;"  >]><html lang="en"><head ><title >Defines</title><meta charset="UTF-8"/><link rel="stylesheet" type="text/css" href="lua-doc.css"/><script rel="stylesheet" type="text/javascript" src="lua-doc.js"></script></head><body ><div class="navigation-bar"><span class="navigation"><a href="index.html">Factorio</a> &raquo; Defines</span><span class="version">Factorio 0.18.0</span></div><h1 >Defines</h1><div class="brief-listing"><table class="brief-members"><tr ><td class="header"><a href="defines.html#defines.alert_type">alert_type</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.behavior_result">behavior_result</a></td><td class="description"> AI command exit status. See <a href="LuaEntity.html#LuaEntity.set_command">LuaEntity::set_command</a>
 </td></tr><tr ><td class="header"><a href="defines.html#defines.build_check_type">build_check_type</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.chain_signal_state">chain_signal_state</a></td><td class="description"> State of a chain signal.
 </td></tr><tr ><td class="header"><a href="defines.html#defines.chunk_generated_status">chunk_generated_status</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.circuit_condition_index">circuit_condition_index</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.circuit_connector_id">circuit_connector_id</a></td><td class="description"></td></tr><tr ><td class="header"><a href="defines.html#defines.command">command</a></td><td class="description"> Command given to units describing what they should do.
 </td></tr><tr ><td class="header"><a href="defines.html#defines.compound_command">compound_command</a></td><td class="description"> How commands are joined together in a compound command (see <a href="defines.html#defines.command.compound">defines.command.compound</a>).
@@ -664,6 +664,7 @@
 <tr id="defines.events.on_player_toggled_map_editor" class="element"><td class="header">defines.events.on_player_toggled_map_editor</td><td class="description"></td></tr>
 <tr id="defines.events.on_entity_cloned" class="element"><td class="header">defines.events.on_entity_cloned</td><td class="description"></td></tr>
 <tr id="defines.events.on_area_cloned" class="element"><td class="header">defines.events.on_area_cloned</td><td class="description"></td></tr>
+<tr id="defines.events.on_brush_cloned" class="element"><td class="header">defines.events.on_brush_cloned</td><td class="description"></td></tr>
 <tr id="defines.events.on_game_created_from_scenario" class="element"><td class="header">defines.events.on_game_created_from_scenario</td><td class="description"></td></tr>
 <tr id="defines.events.on_surface_imported" class="element"><td class="header">defines.events.on_surface_imported</td><td class="description"></td></tr>
 <tr id="defines.events.on_surface_renamed" class="element"><td class="header">defines.events.on_surface_renamed</td><td class="description"></td></tr>
@@ -677,6 +678,8 @@
 <tr id="defines.events.on_unit_group_created" class="element"><td class="header">defines.events.on_unit_group_created</td><td class="description"></td></tr>
 <tr id="defines.events.on_unit_added_to_group" class="element"><td class="header">defines.events.on_unit_added_to_group</td><td class="description"></td></tr>
 <tr id="defines.events.on_unit_removed_from_group" class="element"><td class="header">defines.events.on_unit_removed_from_group</td><td class="description"></td></tr>
+<tr id="defines.events.on_unit_group_finished_gathering" class="element"><td class="header">defines.events.on_unit_group_finished_gathering</td><td class="description"></td></tr>
+<tr id="defines.events.on_build_base_arrived" class="element"><td class="header">defines.events.on_build_base_arrived</td><td class="description"></td></tr>
 <tr id="defines.events.on_chart_tag_added" class="element"><td class="header">defines.events.on_chart_tag_added</td><td class="description"></td></tr>
 <tr id="defines.events.on_chart_tag_modified" class="element"><td class="header">defines.events.on_chart_tag_modified</td><td class="description"></td></tr>
 <tr id="defines.events.on_chart_tag_removed" class="element"><td class="header">defines.events.on_chart_tag_removed</td><td class="description"></td></tr>
@@ -686,7 +689,8 @@
 <tr id="defines.events.on_gui_switch_state_changed" class="element"><td class="header">defines.events.on_gui_switch_state_changed</td><td class="description"></td></tr>
 <tr id="defines.events.on_force_cease_fire_changed" class="element"><td class="header">defines.events.on_force_cease_fire_changed</td><td class="description"></td></tr>
 <tr id="defines.events.on_force_friends_changed" class="element"><td class="header">defines.events.on_force_friends_changed</td><td class="description"></td></tr>
-<tr id="defines.events.on_string_translated" class="element"><td class="header">defines.events.on_string_translated</td><td class="description"></td></tr></table></div></div>
+<tr id="defines.events.on_string_translated" class="element"><td class="header">defines.events.on_string_translated</td><td class="description"></td></tr>
+<tr id="defines.events.on_script_trigger_effect" class="element"><td class="header">defines.events.on_script_trigger_effect</td><td class="description"></td></tr></table></div></div>
 <div class="element" id="defines.flow_precision_index"><div class="element-header">flow_precision_index</div><div class="element-content"><p ></p><table class="brief-members"><tr id="defines.flow_precision_index.one_second" class="element"><td class="header">defines.flow_precision_index.one_second</td><td class="description"></td></tr>
 <tr id="defines.flow_precision_index.one_minute" class="element"><td class="header">defines.flow_precision_index.one_minute</td><td class="description"></td></tr>
 <tr id="defines.flow_precision_index.ten_minutes" class="element"><td class="header">defines.flow_precision_index.ten_minutes</td><td class="description"></td></tr>

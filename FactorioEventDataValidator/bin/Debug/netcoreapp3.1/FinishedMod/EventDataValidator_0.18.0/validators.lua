@@ -41,6 +41,8 @@ local a__luasurface
 local a__luaforce
 local i__boolean
 local a__luaentity
+local r__n__tileposition
+local a__luaunitgroup
 local a__luaitemstack
 local a__luaitemprototype
 local a__luacustomcharttag
@@ -70,7 +72,6 @@ local c__k__i__uint__v__a__luaentity
 local r__n__waypoint
 local a__luatrain
 local f__defines__train_state
-local a__luaunitgroup
 local i__int
 -- hardcoded concepts (and 'Waypoint')
 local function n__position(data, source_mod_name, event_name, field_name)
@@ -136,10 +137,10 @@ function i__uint(value, source_mod_name, event_name, field_name)
     error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "uint"))
   end
   if value < 0 then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "uint", tostring(0), tostring(4294967295)))
+    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "uint", "0", "4294967295"))
   end
   if value > 4294967295 then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "uint", tostring(0), tostring(4294967295)))
+    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "uint", "0", "4294967295"))
   end
   if value % 1 ~= 0 then
     error(string.format(builtin_value_non_integer, source_mod_name, event_name, field_name, "uint"))
@@ -183,6 +184,28 @@ function a__luaentity(value, source_mod_name, event_name, field_name)
   local value_type = advanced_type(value)
   if value_type ~= "LuaEntity" then
     error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "LuaEntity"))
+  end
+end
+function r__n__tileposition(value, source_mod_name, event_name, field_name)
+  local value_type = advanced_type(value)
+  if value_type ~= "table" then
+    error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "array of TilePosition"))
+  end
+  local array_length = #value
+  for _ in next, value, array_length ~= 0 and array_length do
+    error(string.format(array_with_non_numerical_keys, source_mod_name, event_name, field_name, "array of TilePosition"))
+  end
+  if array_length ~= table_size(value) then
+    error(string.format(array_with_gaps, source_mod_name, event_name, field_name, "array of TilePosition"))
+  end
+  for _, v in ipairs(value) do
+    n__tileposition(v, source_mod_name, event_name, field_name)
+  end
+end
+function a__luaunitgroup(value, source_mod_name, event_name, field_name)
+  local value_type = advanced_type(value)
+  if value_type ~= "LuaUnitGroup" then
+    error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "LuaUnitGroup"))
   end
 end
 function a__luaitemstack(value, source_mod_name, event_name, field_name)
@@ -469,22 +492,16 @@ function f__defines__train_state(value, source_mod_name, event_name, field_name)
     error(string.format(define_field_with_wrong_value, source_mod_name, event_name, field_name, "defines.train_state"))
   end
 end
-function a__luaunitgroup(value, source_mod_name, event_name, field_name)
-  local value_type = advanced_type(value)
-  if value_type ~= "LuaUnitGroup" then
-    error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "LuaUnitGroup"))
-  end
-end
 function i__int(value, source_mod_name, event_name, field_name)
   local value_type = advanced_type(value)
   if value_type ~= "number" then
     error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "int"))
   end
   if value < -2147483648 then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "int", tostring(-2147483648), tostring(2147483647)))
+    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "int", "-2147483648", "2147483647"))
   end
   if value > 2147483647 then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "int", tostring(-2147483648), tostring(2147483647)))
+    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "int", "-2147483648", "2147483647"))
   end
   if value % 1 ~= 0 then
     error(string.format(builtin_value_non_integer, source_mod_name, event_name, field_name, "int"))
@@ -562,11 +579,16 @@ return {
       error(string.format(required_field_missing, source_mod_name, "on_area_cloned", "clone_decoratives", "boolean"))
     end
       i__boolean(value, source_mod_name, "on_area_cloned", "clone_decoratives")
-    value = data["clear_destination"]
+    value = data["clear_destination_entities"]
     if not value then
-      error(string.format(required_field_missing, source_mod_name, "on_area_cloned", "clear_destination", "boolean"))
+      error(string.format(required_field_missing, source_mod_name, "on_area_cloned", "clear_destination_entities", "boolean"))
     end
-      i__boolean(value, source_mod_name, "on_area_cloned", "clear_destination")
+      i__boolean(value, source_mod_name, "on_area_cloned", "clear_destination_entities")
+    value = data["clear_destination_decoratives"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_area_cloned", "clear_destination_decoratives", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_area_cloned", "clear_destination_decoratives")
   end,
   [defines.events["on_biter_base_built"]] = function(data, source_mod_name)
     local value
@@ -579,8 +601,84 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "unit-spawner" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be unit-spawner")
       end
+  end,
+  [defines.events["on_brush_cloned"]] = function(data, source_mod_name)
+    local value
+    value = data["source_offset"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "source_offset", "TilePosition"))
+    end
+      n__tileposition(value, source_mod_name, "on_brush_cloned", "source_offset")
+    value = data["destination_offset"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "destination_offset", "TilePosition"))
+    end
+      n__tileposition(value, source_mod_name, "on_brush_cloned", "destination_offset")
+    value = data["source_surface"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "source_surface", "LuaSurface"))
+    end
+      a__luasurface(value, source_mod_name, "on_brush_cloned", "source_surface")
+    value = data["source_positions"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "source_positions", "array of TilePosition"))
+    end
+      r__n__tileposition(value, source_mod_name, "on_brush_cloned", "source_positions")
+    value = data["destination_surface"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "destination_surface", "LuaSurface"))
+    end
+      a__luasurface(value, source_mod_name, "on_brush_cloned", "destination_surface")
+    value = data["destination_force"]
+    if value then
+      a__luaforce(value, source_mod_name, "on_brush_cloned", "destination_force")
+    end
+    value = data["clone_tiles"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "clone_tiles", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_brush_cloned", "clone_tiles")
+    value = data["clone_entities"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "clone_entities", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_brush_cloned", "clone_entities")
+    value = data["clone_decoratives"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "clone_decoratives", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_brush_cloned", "clone_decoratives")
+    value = data["clear_destination_entities"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "clear_destination_entities", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_brush_cloned", "clear_destination_entities")
+    value = data["clear_destination_decoratives"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_brush_cloned", "clear_destination_decoratives", "boolean"))
+    end
+      i__boolean(value, source_mod_name, "on_brush_cloned", "clear_destination_decoratives")
+  end,
+  [defines.events["on_build_base_arrived"]] = function(data, source_mod_name)
+    local value
+    value = data["unit"]
+    if value then
+      a__luaentity(value, source_mod_name, "on_build_base_arrived", "unit")
+    end
+    value = data["group"]
+    if value then
+      a__luaunitgroup(value, source_mod_name, "on_build_base_arrived", "group")
+    end
+    local e = data["unit"]
+    local e_type
+    if e then
+      e_type = e.type
+      if e_type ~= "unit" then
+        error("invalid type " .. e_type .. ", must be unit")
+      end
+    end
   end,
   [defines.events["on_built_entity"]] = function(data, source_mod_name)
     local value
@@ -665,7 +763,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "character-corpse" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be character-corpse")
       end
   end,
   [defines.events["on_chart_tag_added"]] = function(data, source_mod_name)
@@ -834,7 +932,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "combat-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be combat-robot")
       end
   end,
   [defines.events["on_console_chat"]] = function(data, source_mod_name)
@@ -1043,13 +1141,13 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "unit-spawner" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be unit-spawner")
       end
     local e = data["entity"]
     local e_type
       e_type = e.type
       if e_type ~= "unit" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be unit")
       end
   end,
   [defines.events["on_force_cease_fire_changed"]] = function(data, source_mod_name)
@@ -1143,7 +1241,7 @@ return {
     local e_type
       e_type = e.type
       if not types_for_on_gui_checked_state_changed[e_type] then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be one of ...")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1263,7 +1361,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "textfield" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be textfield")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1286,7 +1384,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "choose-elem-button" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be choose-elem-button")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1309,7 +1407,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "frame" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be frame")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1369,7 +1467,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "tabbed-pane" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be tabbed-pane")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1392,7 +1490,7 @@ return {
     local e_type
       e_type = e.type
       if not types_for_on_gui_selection_state_changed[e_type] then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be one of ...")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1415,7 +1513,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "switch" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be switch")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1438,7 +1536,7 @@ return {
     local e_type
       e_type = e.type
       if not types_for_on_gui_text_changed[e_type] then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be one of ...")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1461,7 +1559,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "slider" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be slider")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -1479,7 +1577,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "land-mine" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be land-mine")
       end
   end,
   [defines.events["on_lua_shortcut"]] = function(data, source_mod_name)
@@ -1570,7 +1668,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "market" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be market")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -2002,7 +2100,7 @@ return {
     if e then
       e_type = e.type
       if e_type ~= "car" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be car")
       end
     end
     value = data["player_index"]
@@ -2026,7 +2124,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "item-entity" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be item-entity")
       end
     value = data["player_index"]
       if not game.get_player(value) then
@@ -2334,7 +2432,7 @@ return {
     if e then
       e_type = e.type
       if e_type ~= "player-port" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be player-port")
       end
     end
     value = data["player_index"]
@@ -2625,7 +2723,7 @@ return {
     local e_type
       e_type = e.type
       if not types_for_on_pre_ghost_deconstructed[e_type] then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be one of ...")
       end
     value = data["player_index"]
     if value then
@@ -2737,13 +2835,13 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
     local e = data["cliff"]
     local e_type
       e_type = e.type
       if e_type ~= "cliff" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be cliff")
       end
   end,
   [defines.events["on_pre_surface_cleared"]] = function(data, source_mod_name)
@@ -2838,7 +2936,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "resource" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be resource")
       end
   end,
   [defines.events["on_robot_built_entity"]] = function(data, source_mod_name)
@@ -2866,7 +2964,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
     local e = data["created_entity"]
     return e, e.type
@@ -2907,7 +3005,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
     value = data["surface_index"]
       if not game.surfaces[value] then
@@ -2930,7 +3028,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
   end,
   [defines.events["on_robot_mined"]] = function(data, source_mod_name)
@@ -2949,7 +3047,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
   end,
   [defines.events["on_robot_mined_entity"]] = function(data, source_mod_name)
@@ -2973,7 +3071,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
   end,
   [defines.events["on_robot_mined_tile"]] = function(data, source_mod_name)
@@ -2997,7 +3095,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
     value = data["surface_index"]
       if not game.surfaces[value] then
@@ -3020,7 +3118,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "construction-robot" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be construction-robot")
       end
     local e = data["entity"]
     return e, e.type
@@ -3045,13 +3143,13 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "rocket-silo-rocket" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be rocket-silo-rocket")
       end
     local e = data["rocket_silo"]
     local e_type
       e_type = e.type
       if e_type ~= "rocket-silo" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be rocket-silo")
       end
     value = data["player_index"]
     if value then
@@ -3079,13 +3177,13 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "rocket-silo-rocket" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be rocket-silo-rocket")
       end
     local e = data["rocket_silo"]
     local e_type
       e_type = e.type
       if e_type ~= "rocket-silo" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be rocket-silo")
       end
     value = data["player_index"]
     if value then
@@ -3097,10 +3195,9 @@ return {
   [defines.events["on_runtime_mod_setting_changed"]] = function(data, source_mod_name)
     local value
     value = data["player_index"]
-    if not value then
-      error(string.format(required_field_missing, source_mod_name, "on_runtime_mod_setting_changed", "player_index", "uint"))
-    end
+    if value then
       i__uint(value, source_mod_name, "on_runtime_mod_setting_changed", "player_index")
+    end
     value = data["setting"]
     if not value then
       error(string.format(required_field_missing, source_mod_name, "on_runtime_mod_setting_changed", "setting", "string"))
@@ -3112,9 +3209,11 @@ return {
     end
       i__string(value, source_mod_name, "on_runtime_mod_setting_changed", "setting_type")
     value = data["player_index"]
+    if value then
       if not game.get_player(value) then
         error(string.format(invalid_player_index, source_mod_name, "on_runtime_mod_setting_changed", tostring(value), "player_index"))
       end
+    end
   end,
   [defines.events["on_script_path_request_finished"]] = function(data, source_mod_name)
     local value
@@ -3132,6 +3231,39 @@ return {
       error(string.format(required_field_missing, source_mod_name, "on_script_path_request_finished", "try_again_later", "boolean"))
     end
       i__boolean(value, source_mod_name, "on_script_path_request_finished", "try_again_later")
+  end,
+  [defines.events["on_script_trigger_effect"]] = function(data, source_mod_name)
+    local value
+    value = data["effect_id"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_script_trigger_effect", "effect_id", "string"))
+    end
+      i__string(value, source_mod_name, "on_script_trigger_effect", "effect_id")
+    value = data["surface_index"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_script_trigger_effect", "surface_index", "uint"))
+    end
+      i__uint(value, source_mod_name, "on_script_trigger_effect", "surface_index")
+    value = data["source_position"]
+    if value then
+      n__position(value, source_mod_name, "on_script_trigger_effect", "source_position")
+    end
+    value = data["source_entity"]
+    if value then
+      a__luaentity(value, source_mod_name, "on_script_trigger_effect", "source_entity")
+    end
+    value = data["target_position"]
+    if value then
+      n__position(value, source_mod_name, "on_script_trigger_effect", "target_position")
+    end
+    value = data["target"]
+    if value then
+      a__luaentity(value, source_mod_name, "on_script_trigger_effect", "target")
+    end
+    value = data["surface_index"]
+      if not game.surfaces[value] then
+        error(string.format(invalid_surface_index, source_mod_name, "on_script_trigger_effect", tostring(value), "surface_index"))
+      end
   end,
   [defines.events["on_sector_scanned"]] = function(data, source_mod_name)
     local value
@@ -3154,7 +3286,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "radar" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be radar")
       end
   end,
   [defines.events["on_selected_entity_changed"]] = function(data, source_mod_name)
@@ -3370,7 +3502,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "unit" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be unit")
       end
   end,
   [defines.events["on_unit_group_created"]] = function(data, source_mod_name)
@@ -3380,6 +3512,14 @@ return {
       error(string.format(required_field_missing, source_mod_name, "on_unit_group_created", "group", "LuaUnitGroup"))
     end
       a__luaunitgroup(value, source_mod_name, "on_unit_group_created", "group")
+  end,
+  [defines.events["on_unit_group_finished_gathering"]] = function(data, source_mod_name)
+    local value
+    value = data["group"]
+    if not value then
+      error(string.format(required_field_missing, source_mod_name, "on_unit_group_finished_gathering", "group", "LuaUnitGroup"))
+    end
+      a__luaunitgroup(value, source_mod_name, "on_unit_group_finished_gathering", "group")
   end,
   [defines.events["on_unit_removed_from_group"]] = function(data, source_mod_name)
     local value
@@ -3397,7 +3537,7 @@ return {
     local e_type
       e_type = e.type
       if e_type ~= "unit" then
-        error("invalid type")
+        error("invalid type " .. e_type .. ", must be unit")
       end
   end,
   [defines.events["script_raised_built"]] = function(data, source_mod_name)

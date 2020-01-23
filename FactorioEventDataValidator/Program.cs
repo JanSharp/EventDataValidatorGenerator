@@ -37,21 +37,11 @@ namespace FactorioEventDataValidator
                 .Elements()
                 .Where(e => HasClassXElement(e, "element"));
 
-            EventDefinition allEvents = ParseEventDefinition(events.First());
-
             List<EventDefinition> eventDefinitions = events.Skip(1).Select(e => ParseEventDefinition(e)).ToList();
-            //List<EventDefinition> eventDefinitions = events.Skip(1).Select(e =>
-            //{
-            //    try
-            //    {
-            //        return ParseEventDefinition(e);
-            //    }
-            //    catch
-            //    {
-            //        return null;
-            //    }
-            //}).Where(e => e != null).ToList();
-            eventDefinitions.ForEach(e => e.contents.AddRange(allEvents.contents));
+            EventSpecificDefinitions.ReadAndAddDefinitions(eventDefinitions);
+
+            //EventDefinition allEvents = ParseEventDefinition(events.First()); // all events have 'name' and 'tick' which are always overwritten by the game, therefore always valid
+            //eventDefinitions.ForEach(e => e.contents.AddRange(allEvents.contents));
 
             Generator.Generate(eventDefinitions, gameVersion);
         }
@@ -85,6 +75,7 @@ namespace FactorioEventDataValidator
                 contents = contents,
                 name = definition.Attribute("id").Value,
                 //description = content.Value,
+                //filterable = content.Value.Contains("Can be filtered using"),
             };
 
             XElement detail = GetClassXElement(content, "detail");
@@ -98,7 +89,7 @@ namespace FactorioEventDataValidator
                         type = GetContentType(GetClassXElement(itemContent, "param-type")),
                         name = GetClassXElement(itemContent, "param-name").Value,
                         //description = Regex.Match(itemContent.Value, @"::\s*(.*)").Groups.Cast<Group>().Last().Captures.First().Value,
-                        optional = GetClassXElement(itemContent, "opt") == null ? false : true,
+                        optional = (GetClassXElement(itemContent, "opt") != null || itemContent.Value.Contains("or nil")) ? true : false,
                     });
                 }
             }

@@ -1,0 +1,303 @@
+
+[mapping]
+<type_check> "field_name_to_check"
+  <optional>;
+  <single> "expected_type";
+  <multiple>
+    <type_name> "type_name_in_collection";
+  ;
+;
+<player_index> "player_index_field_name"
+  <optional>;
+;
+<surface_index> "surface_index_field_name"
+  <optional>;
+;
+<localed_return_for_filters>;
+<full_return_for_filters> "entity_field_name";
+
+--[[
+  if a field "player_index" is found
+  it will automatically add that check
+  same for "surface_index"
+  (hardcoded)
+]]
+
+on_biter_base_built
+<type_check> "entity"
+  <single> "unit-spawner";
+;
+
+on_build_base_arrived
+<type_check> "unit" <optional>;
+  <single> "unit";
+;
+
+on_built_entity
+<full_return_for_filters> "created_entity";
+
+on_cancelled_deconstruction
+<full_return_for_filters> "entity";
+
+on_cancelled_upgrade
+<full_return_for_filters> "entity";
+
+on_character_corpse_expired
+<type_check> "corpse"
+  <single> "character-corpse";
+;
+
+on_chart_tag_modified
+<player_index> "old_player_index" <optional>;;
+
+on_combat_robot_expired
+<type_check> "robot"
+  <single> "combat-robot";
+;
+
+on_entity_damaged
+<full_return_for_filters> "entity";
+
+on_entity_died
+<full_return_for_filters> "entity";
+
+--[[on_entity_renamed might be able to be type checked]]
+
+on_entity_spawned
+<type_check> "spawner"
+  <single> "unit-spawner";
+;
+<type_check> "entity"
+  <single> "unit";
+;
+--[[maybe the entity can also be something else?]]
+
+
+
+--[[gui events]]
+
+on_gui_checked_state_changed
+<type_check> "element"
+  <multiple>
+    <type_name> "checkbox";
+    <type_name> "radiobutton";
+  ;
+;
+
+--[[on_gui_click... i think you can click literally everything]]
+
+--[[on_gui_closed really should be validated, but i just can't in here]]
+--[[maybe i'll hard code it - actually really simple]]
+--[[just takes time]]
+
+on_gui_confirmed
+<type_check> "element"
+  <single> "textfield";
+;
+--[[
+<type_check> "element"
+  <multiple>
+    <type_name> "textfield";
+  ;
+;
+maybe it is just text fields ...
+]]
+
+on_gui_elem_changed
+<type_check> "element"
+  <single> "choose-elem-button";
+;
+
+on_gui_location_changed
+<type_check> "element"
+  <single> "frame";
+;
+
+--[[same for on_gui_opened as for on_gui_closed]]
+
+on_gui_selected_tab_changed
+<type_check>
+  <single> "tabbed-pane";
+;
+
+on_gui_selection_state_changed
+<type_check> "element"
+  <multiple>
+    <type_name> "drop-down";
+    <type_name> "list-box";
+  ;
+;
+
+on_gui_switch_state_changed
+<type_check> "element"
+  <single> "switch";
+;
+
+on_gui_text_changed
+<type_check> "element"
+  <multiple>
+    <type_name> "textfield";
+    <type_name> "text-box";
+  ;
+;
+
+on_gui_value_changed
+<type_check> "element"
+  <single> "slider";
+;
+
+--[[end gui events]]
+
+
+
+on_land_mine_armed
+<type_check> "mine"
+  <single> "land-mine";
+;
+
+on_marked_for_deconstruction
+<full_return_for_filters> "entity";
+
+on_marked_for_upgrade
+<full_return_for_filters> "entity";
+
+on_market_item_purchased
+<type_check> "market"
+  <single> "market";
+;
+
+--[[on_mod_item_opened maybe validate item type]]
+
+on_player_banned
+<player_index> "by_player" <optional>;;
+
+on_player_driving_changed_state
+<type_check> "entity" <optional>;
+  <single> "car";
+;
+
+on_player_dropped_item
+<type_check> "entity"
+  <single> "item-entity";
+;
+--[[add name check for "item-on-groun"?]]
+
+--[[on_player_fast_transferred check if type can hold anything?]]
+
+on_player_kicked
+<player_index> "by_player" <optional>;;
+
+on_player_respawned
+<type_check> "player_port" <optional>;
+  <single> "player-port";
+;
+
+--[[on_player_rotated_entity check if entity is rotatable?]]
+
+on_player_unbanned
+<player_index> "by_player" <optional>;;
+
+on_post_entity_died
+<full_return_for_filters> "prototype";
+
+on_pre_ghost_deconstructed
+<type_check> "ghost"
+  <multiple>
+    <type_name> "entity-ghost";
+    <type_name> "tile_ghost";
+  ;
+;
+<localed_return_for_filters>;
+
+on_pre_player_mined_item
+<full_return_for_filters> "entity";
+
+on_pre_robot_exploded_cliff
+<type_check> "robot"
+  <single> "construction-robot";
+;
+<type_check> "cliff"
+  <single> "cliff";
+;
+--[[type check for item being a cliff explosive]]
+
+on_resource_depleted
+<type_check> "entity"
+  <single> "resource";
+;
+
+on_robot_built_entity
+<type_check> "robot"
+  <single> "construction-robot";
+;
+<full_return_for_filters> "created_entity";
+
+on_robot_built_tile
+<type_check> "robot"
+  <single> "construction-robot";
+;
+
+on_robot_exploded_cliff
+<type_check> "robot"
+  <single> "construction-robot";
+;
+--[[type check for item being a cliff explosive]]
+
+on_robot_mined
+<type_check> "robot"
+  <single> "construction-robot";
+;
+
+on_robot_mined_entity
+<type_check> "robot"
+  <single> "construction-robot";
+;
+
+on_robot_mined_tile
+<type_check> "robot"
+  <single> "construction-robot";
+;
+
+on_robot_pre_mined
+<type_check> "robot"
+  <single> "construction-robot";
+;
+<full_return_for_filters> "entity";
+
+on_rocket_launch_ordered
+<type_check> "rocket"
+  <single> "rocket-silo-rocket";
+;
+<type_check> "rocket_silo"
+  <single> "rocket-silo";
+;
+
+on_rocket_launched
+<type_check> "rocket"
+  <single> "rocket-silo-rocket";
+;
+<type_check> "rocket_silo"
+  <single> "rocket-silo";
+;
+
+on_sector_scanned
+<type_check> "radar"
+  <single> "radar";
+;
+
+on_unit_added_to_group
+<type_check> "unit"
+  <single> "unit";
+;
+
+on_unit_removed_from_group
+<type_check> "unit"
+  <single> "unit";
+;
+
+--[[
+  new in 0.18.0
+  on_unit_group_finished_gathering
+  on_build_base_arrived
+  on_script_trigger_effect
+]]

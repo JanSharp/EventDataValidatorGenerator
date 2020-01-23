@@ -1,46 +1,63 @@
 
 local validators = require("__EventDataValidator__/validators")
+-- stupid name, but who cares :)
+local filterers = require("__EventDataValidator__/filters")
 
-local function validate(data)
-  local source_mod_name = data.mod_name
-  if not source_mod_name then return end
-  return validators[data.name](data, "The mod " .. source_mod_name)
-
-  -- local level = 2
-  -- local info
-  -- while true do
-  --   level = level + 1
-  --   info = debug.getinfo(level, "n")
-  --   if not info then return true end -- no raise_event found, it's valid
-  --   if info.namewhat == "C" and info.name == "raise_event" then
-  --     info = debug.getinfo(level + 1, "S")
-  --     local source_mod_name = string.match(info.short_src, "__(.+)__/")
-  --     if source_mod_name then
-  --       source_mod_name = "The mod " + source_mod_name
-  --     else
-  --       source_mod_name = "Something (like the console?)"
-  --     end
-  --     -- might get in here even if the current event technically isn't raised because of a raise_event call
-  --     -- test and fix later
-  --     return validators[data.name](data, source_mod_name)
-  --   end
-  -- end
+local function opt_next(t, k)
+  if k then return end
+  return true, t
 end
+local function opt_pairs(t)
+  if type(t) == "table" then
+    return next, t
+  else
+    return opt_next, t
+  end
+end
+
+local events_to_ignore = {
+  -- generated - all events with 0 fields besides name and tick
+  --<ignore_event>
+  [defines.events["{{event_name}}"]] = true,
+  --</ignore_event>
+}
 
 local old_script = script
 local new_script = {}
 function new_script.on_event(event, f, filters)
-  log(event)
   if f then
-    old_script.on_event(
-      event,
-      function(data)
-        validate(data)
-        f(data)
-      end,
-      filters)
-  else
-    old_script.on_event(event, nil)
+    if events_to_ignore[event] then
+      return old_script.on_event(event, f) -- can't ever have filters
+    end
+
+    local filterer
+
+    for _, e in opt_pairs(event) do
+      local validator = validators[e]
+
+      if filters then -- has filters
+        filterer = filterer or filterers.generate_filter(filters)
+        return old_script.on_event(e, function(data)
+          local mod_name = data.mod_name
+          if mod_name then
+            local entity, entity_type = validator(data, mod_name) -- the validator returns the entity and it's type for anything that can be filtered
+            if not filterer(entity, entity_type) then return end
+          end
+          return f(data) -- make it a tail call
+        end, filters)
+
+      else -- no filters
+        return old_script.on_event(e, function(data)
+          local mod_name = data.mod_name
+          if mod_name then
+            validator(data, mod_name)
+          end
+          return f(data) -- make it a tail call
+        end)
+      end
+    end
+  else -- unsubscribe
+    return old_script.on_event(event, nil)
   end
 end
 setmetatable(new_script, {
