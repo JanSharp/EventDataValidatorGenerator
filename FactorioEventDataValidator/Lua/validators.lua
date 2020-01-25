@@ -27,164 +27,237 @@ local function advanced_type(obj)
   return typ, false
 end
 
-local required_field_missing = "%s raised the event '%s' without the '%s' (must be %s) field."
-local required_concept_field_missing = "%s raised the event '%s' with the '%s' (must be %s) field without the nested field '%s' (must be %s)."
-local field_with_wrong_type = "%s raised the event '%s' with the '%s' field with the wrong type (%s instead of %s)."
-local builtin_value_out_of_range = "%s raised the event '%s' with the '%s' field (must be %s) with a value out of range (%s to %s)."
-local builtin_value_non_integer = "%s raised the event '%s' with the '%s' field (must be %s) with a non integer value."
-local define_field_with_wrong_type = "%s raised the event '%s' with the '%s' field with the wrong type (%s instead of %s (which are numbers))."
-local define_field_with_wrong_value = "%s raised the event '%s' with the '%s' field with the wrong define value (must be any %s)."
-local array_with_gaps_or_non_numerical_keys = "%s raised the event '%s' with the '%s' field (must be %s) with at least one non numerical key or gap."
-local invalid_player_index = "%s raised the event '%s' with an invalid player index (%s) in the field '%s'."
-local invalid_surface_index = "%s raised the event '%s' with an invalid surface index (%s) in the field '%s'."
+local function evaluate_full_field_name(field_name, field_names)
+  -- field_names is a table of names, but for performance reasons that table only gets
+  -- created if there are nested type checks (so for checking 'entity' it would be nil, but for
+  -- 'position.x' it would be a table {"position", "x"})
+  --
+  -- if a value in field_names is not a string, or the string is not a valid lua identifier
+  -- (like if it contains a dash '-' or something) it will be put in square brackets
+  -- but the first name is guaranteed to be a valid identifier
+  --
+  -- the full field name string only needs to be evaluated for errors,
+  -- so who cares about performance in this function
 
--- predefine all locals so that the upvalues link correctly (generated)
+  if field_names then
+    for i, v in next, field_names, 1 do -- save to skip 1 like this, since it will always be there
+      if type(v) ~= "string" then
+        v = tostring(v)
+      end
+      if string.match(v, "^[a-zA-Z_][a-zA-Z0-9_]*$") then
+        field_names[i] = "." .. v
+      else
+        field_names[i] = '["' .. v .. '"]'
+      end
+    end
+    return table.concat(field_names)
+  else
+    return field_name
+  end
+end
+
+-- from here on everything is generated (some of it "generated", but still)
+-- predefine all locals so that the upvalues link correctly
 --<type_validator>
 --[[!local {{type_id}}]] --[[!]]
 --</type_validator>
 
--- hardcoded concepts (and 'Waypoint')
+--<concept_validator>
+--[[!local n__{{concept_name}}]] --[[!]]
+--</concept_validator>
+
+-- concepts (and 'Waypoint')
 --[[!]]
 -- these types must also be hard coded defined in C# (Generator.cs)
 local i__double
 local i__int
 --[[!]]
-local function n__position(data, source_mod_name, event_name, field_name)
+
+local values_for_signalid_type = {
+  ["item"] = true,
+  ["fluid"] = true,
+  ["virtual"] = true,
+}
+
+--<concept_validator>
+function n__--[[!{{concept_name}}]] --[[!]](data, source_mod_name, event_name, field_name, field_names, field_name_count)
   local value
-  value = data["x"]
-  if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "Position", "x", "double"))
+
+  --<basic_type_check>
+  local data_type = advanced_type(data)
+  if data_type ~= "{{type_name}}" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "{{concept_display_name}}", data_type},
+    }
   end
-  i__double(value, source_mod_name, event_name, field_name)
-  value = data["y"]
-  if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "Position", "y", "double"))
+  --</basic_type_check>
+
+  if not field_names then
+    field_names = {field_name}
+    field_name_count = 2
+  else
+    field_name_count = field_name_count + 1
   end
-  i__double(value, source_mod_name, event_name, field_name)
-end
 
-local function n__chunkposition(data, source_mod_name, event_name, field_name)
-  local value
-  value = data["x"]
+  --<field>
+  value = data["{{field_name}}"]
+  field_names[field_name_count] = "{{field_name}}"
+
+  --<required>
   if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "ChunkPosition", "x", "int"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "{{field_type_name}}"},
+    }
   end
-  i__int(value, source_mod_name, event_name, field_name)
-  value = data["y"]
-  if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "ChunkPosition", "y", "int"))
+  --</required>
+
+  --<optional>
+  if value then
+  --</optional>
+
+    --[[!{{field_type_id}}]] _ --[[!]](value, source_mod_name, event_name, nil, field_names, field_name_count)
+
+  --<optional>
   end
-  i__int(value, source_mod_name, event_name, field_name)
-end
+  --</optional>
 
-local function n__tileposition(data, source_mod_name, event_name, field_name)
-  local value
-  value = data["x"]
-  if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "TilePosition", "x", "int"))
+  --<player_index>
+  value = data["{{player_index_field_name}}"]
+  field_names[field_name_count] = "{{player_index_field_name}}"
+  --<optional>
+  if value then
+  --</optional>
+    if not game.get_player(value) then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, event_name},
+        {"raise-event-protection.field-with-invalid-value-simple", evaluate_full_field_name(field_name, field_names), "player index"},
+      }
+    end
+  --<optional>
   end
-  i__int(value, source_mod_name, event_name, field_name)
-  value = data["y"]
-  if not value then
-    error(string.format(required_concept_field_missing, source_mod_name, event_name, field_name, "TilePosition", "y", "int"))
+  --</optional>
+  --</player_index>
+
+  --<signalid>
+  -- the value of type is in value already in this case
+  if not values_for_signalid_type[value] then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-must-be-one-of", evaluate_full_field_name(field_name, field_names), "item, fluid, virtual"},
+    }
   end
-  i__int(value, source_mod_name, event_name, field_name)
+  --</signalid>
+
+  --</field>
+
+  field_names[field_name_count] = nil
+  field_name_count = field_name_count - 1
 end
+--</concept_validator>
 
-local function n__boundingbox(data, source_mod_name, event_name, field_name)
-
-end
-local function n__simpleitemstack(data, source_mod_name, event_name, field_name)
-
-end
-local function n__oldtileandposition(data, source_mod_name, event_name, field_name)
-
-end
-local function n__tags(data, source_mod_name, event_name, field_name)
-
-end
-local function n__displayresolution(data, source_mod_name, event_name, field_name)
-
-end
-local function n__localisedstring(data, source_mod_name, event_name, field_name)
-
-end
-local function n__signalid(data, source_mod_name, event_name, field_name)
-
-end
-local function n__waypoint(data, source_mod_name, event_name, field_name)
-
-end
-
---[[!]]
--- to make them not gray out because of being unused
-n__position()
-n__chunkposition()
-n__tileposition()
-n__boundingbox()
-n__simpleitemstack()
-n__oldtileandposition()
-n__tags()
-n__displayresolution()
-n__localisedstring()
-n__signalid()
-n__waypoint()
---[[!]]
-
-
--- from here on everything is generated
 -- type validators
 
 --<type_validator>
-function --[[!{{type_id}}]] _ --[[!]](value, source_mod_name, event_name, field_name)
-  --[[!]] local value_type --[[just so that there are no warnings about redefined locals]] --[[!]]
+function --[[!{{type_id}}]] _ --[[!]](value, source_mod_name, event_name, field_name, field_names, field_name_count)
+  --[[!]] local value_type --[[just so that there are no warnings about redefined locals in here]] --[[!]]
 
   --<lazy>
-  --[[!{{lazy_type_id}}]] _ --[[!]](value.get(), source_mod_name, event_name, field_name)
+  --[[!{{lazy_type_id}}]] _ --[[!]](value.get(), source_mod_name, event_name, field_name, field_names, field_name_count)
   --</lazy>
 
   --<array>
   --[[!local]] --[[!]] value_type = advanced_type(value)
   if value_type ~= "table" then
-    error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "{{type_name}}", value_type},
+    }
+  end
+  if not field_names then
+    field_names = {field_name}
+    field_name_count = 2
+  else
+    field_name_count = field_name_count + 1
   end
   local array_length = 0
-  for _, v in ipairs(value) do
-    --[[!{{array_elem_type_id}}]] _ --[[!]](v, source_mod_name, event_name, field_name)
-    array_length = array_length + 1
+  for i, v in ipairs(value) do
+    field_names[field_name_count] = i
+    --[[!{{array_elem_type_id}}]] _ --[[!]](v, source_mod_name, event_name, nil, field_names, field_name_count)
+    array_length = i
   end
+  field_names[field_name_count] = nil
+  field_name_count = field_name_count - 1
   if array_length ~= table_size(value) then
-    error(string.format(array_with_gaps_or_non_numerical_keys, source_mod_name, event_name, field_name, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-invalid-array", evaluate_full_field_name(field_name, field_names), "{{type_name}}"},
+    }
   end
   --</array>
 
 
   --<dictionary>
-  -- todo: impl
+  --[[!local]] --[[!]] value_type = advanced_type(value)
+  if value_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "{{type_name}}", value_type},
+    }
+  end
+  if not field_names then
+    field_names = {field_name}
+    field_name_count = 2
+  else
+    field_name_count = field_name_count + 1
+  end
+  local key_string
+  for k, v in pairs(value) do
+    key_string = tostring(k)
+    field_names[field_name_count] = "[__key__] " .. key_string
+    --[[!{{dict_key_type_id}}]] _ --[[!]](k, source_mod_name, event_name, nil, field_names, field_name_count)
+    field_names[field_name_count] = "[__value__] " .. key_string
+    --[[!{{dict_value_type_id}}]] _ --[[!]](v, source_mod_name, event_name, nil, field_names, field_name_count)
+  end
+  field_names[field_name_count] = nil
+  field_name_count = field_name_count - 1
   --</dictionary>
 
 
   --<builtin_or_luaobj>
   --[[!local]] --[[!]] value_type = advanced_type(value)
   if value_type ~= "{{type_string}}" then
-    error(string.format(field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "{{type_name}}", value_type},
+    }
   end
 
   --<min_check>
   if value < --[[!{{min_value}}]] 0 --[[!]] then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "{{type_name}}", "{{min_value}}", "{{max_value}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-value-out-of-range", evaluate_full_field_name(field_name, field_names), "{{type_name}}", "{{min_value}}", "{{max_value}}"},
+    }
   end
   --</min_check>
 
   --<max_check>
   if value > --[[!{{max_value}}]] 0 --[[!]] then
-    error(string.format(builtin_value_out_of_range, source_mod_name, event_name, field_name, "{{type_name}}", "{{min_value}}", "{{max_value}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-value-out-of-range", evaluate_full_field_name(field_name, field_names), "{{type_name}}", "{{min_value}}", "{{max_value}}"},
+    }
   end
   --</max_check>
 
   --<integer_check>
   if value % 1 ~= 0 then
-    error(string.format(builtin_value_non_integer, source_mod_name, event_name, field_name, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-non-integer-value", evaluate_full_field_name(field_name, field_names), "{{type_name}}"},
+    }
   end
   --</integer_check>
 
@@ -194,7 +267,10 @@ function --[[!{{type_id}}]] _ --[[!]](value, source_mod_name, event_name, field_
   --<defines>
   --[[!local]] --[[!]] value_type = advanced_type(value)
   if value_type ~= "number" then
-    error(string.format(define_field_with_wrong_type, source_mod_name, event_name, field_name, value_type, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "{{type_name}}", value_type},
+    }
   end
   if not (
     -- todo: this can very most likely use range checks instead. maybe i'll do that, quite a bit of effort tho if i want it to be fully generic and reliable. not sure
@@ -203,7 +279,10 @@ function --[[!{{type_id}}]] _ --[[!]](value, source_mod_name, event_name, field_
     --</check>
     false)
   then
-    error(string.format(define_field_with_wrong_value, source_mod_name, event_name, field_name, "{{type_name}}"))
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-value", evaluate_full_field_name(field_name, field_names), "{{type_name}}", "{{type_name}}"},
+    }
   end
   --</defines>
 end
@@ -235,7 +314,10 @@ return {
 
     --<required>
     if not value then
-      error(string.format(required_field_missing, source_mod_name, "{{event_name}}", "{{field_name}}", "{{field_type_name}}"))
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+        {"raise-event-protection.field-missing", "{{field_name}}", "{{field_type_name}}"},
+      }
     end
     --</required>
 
@@ -260,12 +342,18 @@ return {
       e_type = e.type
       --<single>
       if e_type ~= "{{expected_type}}" then
-        error("invalid type " .. e_type .. ", must be {{expected_type}}")
+        error{"",
+          {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+          {"raise-event-protection.field-with-wrong-type", "{{field_name_to_check}}", "{{expected_type}}", "{{expected_type}}"},
+        }
       end
       --</single>
       --<multiple>
       if not types_for_--[[!{{event_name}}]] --[[!]][e_type] then
-        error("invalid type " .. e_type .. ", must be one of ...")
+        error{"",
+          {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+          {"raise-event-protection.field-with-wrong-type", "{{field_name_to_check}}", "{{expected_type}}", "{{expected_type}}"},
+        }
       end
       --</multiple>
     --<optional>
@@ -279,7 +367,10 @@ return {
     if value then
     --</optional>
       if not game.get_player(value) then
-        error(string.format(invalid_player_index, source_mod_name, "{{event_name}}", tostring(value), "{{player_index_field_name}}"))
+        error{"",
+         {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+         {"raise-event-protection.field-with-invalid-value-simple", "{{player_index_field_name}}", "player index"},
+        }
       end
     --<optional>
     end
@@ -292,7 +383,10 @@ return {
     if value then
     --</optional>
       if not game.surfaces[value] then
-        error(string.format(invalid_surface_index, source_mod_name, "{{event_name}}", tostring(value), "{{surface_index_field_name}}"))
+        error{"",
+          {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+          {"raise-event-protection.field-with-invalid-value-simple", "{{surface_index_field_name}}", "surface index"},
+        }
       end
     --<optional>
     end

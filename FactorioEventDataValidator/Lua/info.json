@@ -2,7 +2,7 @@
   "name": "{{mod_name}}",
   "version": "{{version}}",
   "factorio_version": "{{factorio_version}}",
-  "title": "Event Data Validator",
+  "title": "Raise Event Protection",
   "author": "JanSharp",
   "contact": "",
   "homepage": "",

@@ -17,9 +17,9 @@ end
 
 local events_to_ignore = {
   -- generated - all events with 0 fields besides name and tick
-  --<ignore_event>
-  [defines.events["{{event_name}}"]] = true,
-  --</ignore_event>
+  [defines.events["on_tick"]] = true,
+  [defines.events["on_game_created_from_scenario"]] = true,
+
 }
 
 local original_handlers = {}

@@ -141,7 +141,8 @@ namespace FactorioEventDataValidator.Data
             "dictionary" => new List<(Dictionary<string, string> labels, Generator.Resolver subResolver)>()
             {
                 (new Dictionary<string, string>() {
-                    
+                    { "dict_key_type_id", keyType.Id },
+                    { "dict_value_type_id", valueType.Id },
                 },
                 t2 => null)
             },

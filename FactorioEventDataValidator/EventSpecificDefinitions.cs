@@ -13,30 +13,70 @@ namespace FactorioEventDataValidator
         public const string SourceLuaDir = Generator.SourceLuaDir;
         public const string FileName = "event-specific-definitions.txt";
 
-        public static void ReadAndAddDefinitions(List<EventDefinition> events)
+        static readonly Regex SpecialDefNameRegex = new Regex(@"\A\[.*?\]\z", RegexOptions.Compiled);
+        public static void ReadAndAddDefinitions(List<EventDefinition> events, out List<ConceptDefinition> concepts)
         {
             DirectoryInfo sourceDir = new DirectoryInfo(SourceLuaDir);
             string input = File.ReadAllText(Path.Combine(sourceDir.FullName, FileName));
             int pos = 0;
 
-            bool hasMapping = TryParseDefinition(input, out Definition mapping, ref pos);
-            if (!hasMapping || mapping.name != "[mapping]")
-                throw new Exception("Event specific definitions missing [mapping].");
+            List<Section> sections = new List<Section>();
+            Section currentSection = null;
 
-            Dictionary<string, Definition> definitions = new Dictionary<string, Definition>();
             while (TryParseDefinition(input, out Definition def, ref pos))
-                definitions.Add(def.name, def);
-
-            foreach (EventDefinition itemEvent in events)
             {
-                Definition definition = definitions.ContainsKey(itemEvent.name) ? definitions[itemEvent.name] : new Definition(itemEvent.name, new List<Tag>());
-                EventContent playerIndex = itemEvent.contents.FirstOrDefault(ec => ec.name == "player_index");
-                if (playerIndex != null)
-                    definition.tags.Add(new Tag("player_index", new List<string>() { "player_index" }, playerIndex.optional ? new List<Tag>() { new Tag("optional", new List<string>(), new List<Tag>()) } : new List<Tag>()));
-                EventContent surfaceIndex = itemEvent.contents.FirstOrDefault(ec => ec.name == "surface_index");
-                if (surfaceIndex != null)
-                    definition.tags.Add(new Tag("surface_index", new List<string>() { "surface_index" }, surfaceIndex.optional ? new List<Tag>() { new Tag("optional", new List<string>(), new List<Tag>()) } : new List<Tag>()));
-                itemEvent.eventSpecificResolvers = definition.Create(mapping);
+                if (currentSection != null && currentSection.mapping == null)
+                {
+                    if (def.name != "[mapping]")
+                        throw new Exception("Section '" + currentSection.name + "' missing [mapping].");
+                    currentSection.mapping = def;
+                }
+                else if (SpecialDefNameRegex.IsMatch(def.name))
+                {
+                    currentSection = new Section(def.name[1..^1]);
+                    sections.Add(currentSection);
+                }
+                else
+                {
+                    if (currentSection == null)
+                        throw new Exception("Must define a section and it's mapping before adding definitions to it.");
+                    currentSection.definitions.Add(def.name, def);
+                }
+            }
+
+            if (currentSection != null && currentSection.mapping == null)
+                throw new Exception("Section '" + currentSection.name + "' missing [mapping].");
+
+
+            concepts = null;
+            foreach (Section section in sections)
+            {
+                switch (section.name)
+                {
+                    case "events":
+                        foreach (EventDefinition itemEvent in events)
+                        {
+                            Definition definition = section.definitions.ContainsKey(itemEvent.name) ? section.definitions[itemEvent.name] : new Definition(itemEvent.name, new List<Tag>());
+                            EventContent playerIndex = itemEvent.contents.FirstOrDefault(ec => ec.name == "player_index");
+                            if (playerIndex != null)
+                                definition.tags.Add(new Tag("player_index", new List<string>() { "player_index" }, playerIndex.optional ? new List<Tag>() { new Tag("optional", new List<string>(), new List<Tag>()) } : new List<Tag>()));
+                            EventContent surfaceIndex = itemEvent.contents.FirstOrDefault(ec => ec.name == "surface_index");
+                            if (surfaceIndex != null)
+                                definition.tags.Add(new Tag("surface_index", new List<string>() { "surface_index" }, surfaceIndex.optional ? new List<Tag>() { new Tag("optional", new List<string>(), new List<Tag>()) } : new List<Tag>()));
+                            itemEvent.Resolvers = definition.Create(section.mapping);
+                        }
+                        break;
+
+                    case "concepts":
+                        concepts = section.definitions
+                            .Select(kvp => new ConceptDefinition()
+                            {
+                                name = kvp.Value.name,
+                                Resolvers = kvp.Value.Create(section.mapping)
+                            })
+                            .ToList();
+                        break;
+                }
             }
         }
 
@@ -78,6 +118,19 @@ namespace FactorioEventDataValidator
             return true;
         }
 
+
+        class Section
+        {
+            public string name;
+            public Definition mapping;
+            public Dictionary<string, Definition> definitions;
+
+            public Section(string name)
+            {
+                this.name = name;
+                definitions = new Dictionary<string, Definition>();
+            }
+        }
 
         class Definition
         {

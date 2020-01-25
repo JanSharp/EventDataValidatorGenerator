@@ -18,7 +18,7 @@
 -- "ghost_name": Additional fields:
 --     name :: string: The ghost prototype name
 
-local all_types = require("__EventDataValidator__/all-entity-types")
+local all_types = require("__RaiseEventProtection__/all-entity-types")
 
 local raw_definitions = {
   ["ghost"] = {

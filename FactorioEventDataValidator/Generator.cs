@@ -13,22 +13,23 @@ namespace FactorioEventDataValidator
         // yes these should be config vars, but idc
         public const string SourceLuaDir = "../../../Lua";
         public const string TargetLuaDir = "FinishedMod";
-        public const string ModName = "EventDataValidator";
+        public const string ModName = "RaiseEventProtection";
         public const string ValidatorFile = "validator.lua";
         public const string ValidatorsFile = "validators.lua";
         public const string InfoFile = "info.json";
         public static readonly List<string> IncludeFiles = new List<string>()
         {
-            ".vscode/launch.json",
-            ".vscode/settings.json",
+            //".vscode/launch.json",
+            //".vscode/settings.json",
             "filters.lua",
             "all-entity-types.lua",
             "LICENSE",
+            "locale/en/RaiseEventProtection.cfg",
         };
         
 
 
-        public static void Generate(List<EventDefinition> events, string gameVersion)
+        public static void Generate(List<EventDefinition> events, List<ConceptDefinition> concepts, string gameVersion)
         {
             List<ContentType> contentTypes = new List<ContentType>();
             void AddContentType(ContentType ct)
@@ -52,7 +53,19 @@ namespace FactorioEventDataValidator
             new List<string>() {
                 "i__double",
                 "i__int",
-            }.ForEach(s => contentTypes.Add(ContentType.AllTypes[s]));
+                "i__float",
+                "i__uint",
+                "a__luatileprototype",
+                //"n__tileposition", // concepts are defined sepereatly, so this is just here for completeness
+            }.ForEach(s => contentTypes.Add(ContentType.AllTypes[s])); // this will just throw if it does not exist
+            if (!contentTypes.Any(ct => ct.Id == "r__i__string"))
+            {
+                contentTypes.Add(new ContentTypeArray()
+                {
+                    readableName = "array of string",
+                    elemType = contentTypes.First(ct => ct.Id == "i__string"),
+                });
+            }
 
             contentTypes = contentTypes.Distinct().ToList();
 
@@ -87,6 +100,13 @@ namespace FactorioEventDataValidator
             {
                 (new Dictionary<string, string>(), t => t switch
                 {
+                    "concept_validator" => concepts.Select(cd => (new Dictionary<string, string>()
+                    {
+                        { "concept_name", cd.name },
+                    },
+                    (Resolver)(t => cd.Resolvers.ContainsKey(t) ? cd.Resolvers[t] : null)
+                    )).ToList(),
+
                     "type_validator" => contentTypes.Select(ct => (new Dictionary<string, string>()
                     {
                         { "type_id", ct.Id },
@@ -119,8 +139,8 @@ namespace FactorioEventDataValidator
                                 )).ToList();
                                 break;
                             default:
-                                if (ed.eventSpecificResolvers.ContainsKey(t2))
-                                    result = ed.eventSpecificResolvers[t2];
+                                if (ed.Resolvers.ContainsKey(t2))
+                                    result = ed.Resolvers[t2];
                                 else
                                     result = null;
                                 break;

@@ -1,8 +1,8 @@
 {
-  "name": "EventDataValidator",
+  "name": "RaiseEventProtection",
   "version": "0.18.0",
   "factorio_version": "0.18",
-  "title": "Event Data Validator",
+  "title": "Raise Event Protection",
   "author": "JanSharp",
   "contact": "",
   "homepage": "",

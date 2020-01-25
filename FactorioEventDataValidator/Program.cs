@@ -18,32 +18,32 @@ namespace FactorioEventDataValidator
         static async Task Main(string[] args)
         {
             string gameVersion = args[0];
+            string namedHtmlEntities = File.ReadAllText("NamedHtmlEntities.txt");
 
-            string definesHtml = "<!DOCTYPE html [" + File.ReadAllText("NamedHtmlEntities.txt") + "]>"
+            string definesHtml = "<!DOCTYPE html [" + namedHtmlEntities + "]>"
                 + Regex.Replace(await Client.GetStringAsync(string.Format("https://lua-api.factorio.com/{0}/defines.html", gameVersion)), @"^<!DOCTYPE[^>]*?>", "");
-            File.WriteAllText("definesHtml.txt", definesHtml);
 
             var hi = XElement.Parse(definesHtml);
             ParseDefinesDefinition(XElement.Parse(definesHtml).Element("body"));
             var hi2 = ContentType.AllTypes;
 
 
-            string eventsHtml = "<!DOCTYPE html [" + File.ReadAllText("NamedHtmlEntities.txt") + "]>"
+            string eventsHtml = "<!DOCTYPE html [" + namedHtmlEntities + "]>"
                 + Regex.Replace(await Client.GetStringAsync(string.Format("https://lua-api.factorio.com/{0}/events.html", gameVersion)), @"^<!DOCTYPE[^>]*?>", "");
-            File.WriteAllText("eventsHtml.txt", eventsHtml);
 
-            var events = XElement.Parse(eventsHtml)
+            List<EventDefinition> eventDefinitions = XElement.Parse(eventsHtml)
                 .Element("body")
                 .Elements()
-                .Where(e => HasClassXElement(e, "element"));
+                .Where(e => HasClassXElement(e, "element"))
+                .Skip(1) // skip "All Events" because 'name' and 'tick' are always overwritten by the game, therefore always valid
+                .Select(e => ParseEventDefinition(e))
+                .ToList();
+            EventSpecificDefinitions.ReadAndAddDefinitions(eventDefinitions, out List<ConceptDefinition> concepts);
 
-            List<EventDefinition> eventDefinitions = events.Skip(1).Select(e => ParseEventDefinition(e)).ToList();
-            EventSpecificDefinitions.ReadAndAddDefinitions(eventDefinitions);
+            //File.WriteAllText("definesHtml.txt", definesHtml);
+            //File.WriteAllText("eventsHtml.txt", eventsHtml);
 
-            //EventDefinition allEvents = ParseEventDefinition(events.First()); // all events have 'name' and 'tick' which are always overwritten by the game, therefore always valid
-            //eventDefinitions.ForEach(e => e.contents.AddRange(allEvents.contents));
-
-            Generator.Generate(eventDefinitions, gameVersion);
+            Generator.Generate(eventDefinitions, concepts, gameVersion);
         }
 
         static void ParseDefinesDefinition(XElement definition)
