@@ -18,7 +18,7 @@
 -- "ghost_name": Additional fields:
 --     name :: string: The ghost prototype name
 
-local all_types = require("__EventDataValidator__/all-entity-types")
+local all_types = require("__RaiseEventProtection__/all-entity-types.lua")
 
 local raw_definitions = {
   ["ghost"] = {
@@ -118,6 +118,9 @@ local check_string_helpers = {
   ["name"] = function(filter)
     return "name" .. filter.name
   end,
+  ["force"] = function(filter)
+    return "force" .. filter.force
+  end,
   ["ghost_type"] = function(filter)
     return "ghost_type" .. filter.ghost_type
   end,
@@ -145,6 +148,10 @@ local check_table_helpers = {
   ["name"] = function(filter)
     needed_localed_fields["name"] = true
     return { count = 1, filter = "name", value = filter.name, invert = filter.invert, mode = filter.mode or "or" }
+  end,
+  ["force"] = function(filter)
+    needed_localed_fields["force.name"] = true
+    return { count = 1, filter = "force.name", value = filter.name, invert = filter.invert, mode = filter.mode or "or" }
   end,
   ["ghost_type"] = function(filter)
     needed_localed_fields["ghost_type"] = true
@@ -223,7 +230,7 @@ local function generate_filter(filters)
   end
 
   func_str = func_str .. "end"
-  return load(func_str, "=(load)")()
+  return load(func_str)() -- , "=(load)" -- maybe i'll add that in, but it's actually nice without it for debugging
 end
 
 return {

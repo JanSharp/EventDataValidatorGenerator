@@ -36,13 +36,14 @@ local function evaluate_full_field_name(field_name, field_names)
   -- so who cares about performance in this function
   if field_names then
     for i, v in next, field_names, 1 do -- save to skip 1 like this, since it will always be there
-      if type(v) ~= "string" then
-        v = tostring(v)
-      end
-      if string.match(v, "^[a-zA-Z_][a-zA-Z0-9_]*$") then
-        field_names[i] = "." .. v
+      if type(v) == "string" then
+        if string.match(v, "^[a-zA-Z_][a-zA-Z0-9_]*$") then
+          field_names[i] = "." .. v
+        else
+          field_names[i] = '["' .. v .. '"]'
+        end
       else
-        field_names[i] = '["' .. v .. '"]'
+        field_names[i] = '[' .. tostring(v) .. ']'
       end
     end
     return table.concat(field_names)
@@ -108,8 +109,12 @@ local values_for_signalid_type = {
   ["fluid"] = true,
   ["virtual"] = true,
 }
+local values_for_n__tags = {
+  ["string"] = true,
+  ["boolean"] = true,
+  ["number"] = true,
+}
 function n__position(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -117,6 +122,7 @@ function n__position(data, source_mod_name, event_name, field_name, field_names,
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "Position", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -145,7 +151,6 @@ function n__position(data, source_mod_name, event_name, field_name, field_names,
   field_name_count = field_name_count - 1
 end
 function n__chunkposition(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -153,6 +158,7 @@ function n__chunkposition(data, source_mod_name, event_name, field_name, field_n
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "ChunkPosition", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -181,7 +187,6 @@ function n__chunkposition(data, source_mod_name, event_name, field_name, field_n
   field_name_count = field_name_count - 1
 end
 function n__tileposition(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -189,6 +194,7 @@ function n__tileposition(data, source_mod_name, event_name, field_name, field_na
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "TilePosition", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -217,7 +223,6 @@ function n__tileposition(data, source_mod_name, event_name, field_name, field_na
   field_name_count = field_name_count - 1
 end
 function n__boundingbox(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -225,6 +230,7 @@ function n__boundingbox(data, source_mod_name, event_name, field_name, field_nam
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "BoundingBox", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -258,7 +264,6 @@ function n__boundingbox(data, source_mod_name, event_name, field_name, field_nam
   field_name_count = field_name_count - 1
 end
 function n__simpleitemstack(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -266,6 +271,7 @@ function n__simpleitemstack(data, source_mod_name, event_name, field_name, field
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "SimpleItemStack", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -310,7 +316,6 @@ function n__simpleitemstack(data, source_mod_name, event_name, field_name, field
   field_name_count = field_name_count - 1
 end
 function n__oldtileandposition(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -318,6 +323,7 @@ function n__oldtileandposition(data, source_mod_name, event_name, field_name, fi
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "OldTileAndPosition", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -346,18 +352,48 @@ function n__oldtileandposition(data, source_mod_name, event_name, field_name, fi
   field_name_count = field_name_count - 1
 end
 function n__tags(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
+  local data_type = advanced_type(data)
+  if data_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "Tags", data_type},
+    }
+  end
+  -- modified copy paste from dictionary validation
+  local value_type = advanced_type(data)
+  if value_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "Tags", value_type},
+    }
+  end
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
   else
     field_name_count = field_name_count + 1
   end
+  local key_string
+  for k, v in pairs(data) do
+    key_string = tostring(k)
+    field_names[field_name_count] = key_string
+    i__string(k, source_mod_name, event_name, nil, field_names, field_name_count)
+    value_type = advanced_type(v)
+    if not values_for_n__tags[value_type] then
+      if value_type == "table" then
+        n__tags(v, source_mod_name, event_name, nil, field_names, field_name_count)
+      else
+        error{"",
+          {"raise-event-protection.error-prefix", source_mod_name, event_name},
+          {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "[string, boolean, number, table]", value_type},
+        }
+      end
+    end
+  end
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end
 function n__displayresolution(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -365,6 +401,7 @@ function n__displayresolution(data, source_mod_name, event_name, field_name, fie
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "DisplayResolution", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -393,18 +430,51 @@ function n__displayresolution(data, source_mod_name, event_name, field_name, fie
   field_name_count = field_name_count - 1
 end
 function n__localisedstring(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
+  -- modified copy paste from array validation
+  local value_type = advanced_type(data)
+  if value_type == "string" then return end
+  if value_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "LocalisedString", value_type},
+    }
+  end
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
   else
     field_name_count = field_name_count + 1
   end
+  local first_value = data[1]
+  field_names[field_name_count] = 1
+  if not first_value then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "string"},
+    }
+  end
+  i__string(first_value, source_mod_name, event_name, nil, field_names, field_name_count)
+  local array_length = 0
+  local not_first = false
+  for i, v in ipairs(data) do
+    if not_first then
+      field_names[field_name_count] = i
+      n__localisedstring(v, source_mod_name, event_name, nil, field_names, field_name_count)
+      array_length = i
+    else
+      not_first = true
+    end
+  end
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
+  if array_length ~= table_size(data) then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-invalid-array", evaluate_full_field_name(field_name, field_names), "LocalisedString"},
+    }
+  end
 end
 function n__signalid(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -412,6 +482,7 @@ function n__signalid(data, source_mod_name, event_name, field_name, field_names,
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "SignalID", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -432,11 +503,17 @@ function n__signalid(data, source_mod_name, event_name, field_name, field_names,
     }
   end
     i__string(value, source_mod_name, event_name, nil, field_names, field_name_count)
+  -- the value of type is in value already in this case
+  if not values_for_signalid_type[value] then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-must-be-one-of", evaluate_full_field_name(field_name, field_names), "item, fluid, virtual"},
+    }
+  end
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end
 function n__waypoint(data, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -444,6 +521,7 @@ function n__waypoint(data, source_mod_name, event_name, field_name, field_names,
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "WayPoint", data_type},
     }
   end
+  local value
   if not field_names then
     field_names = {field_name}
     field_name_count = 2
@@ -468,6 +546,14 @@ function n__waypoint(data, source_mod_name, event_name, field_name, field_names,
     }
   end
     i__uint(value, source_mod_name, event_name, nil, field_names, field_name_count)
+  value = data["player_index"]
+    field_names[field_name_count] = "player_index"
+    if not game.get_player(value) then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, event_name},
+        {"raise-event-protection.field-with-invalid-value-simple", evaluate_full_field_name(field_name, field_names), "player index"},
+      }
+    end
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end

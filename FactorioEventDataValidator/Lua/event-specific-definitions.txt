@@ -314,33 +314,40 @@ on_unit_removed_from_group
 [concepts]
 
 [mapping]
-<player_index> "player_index_field_name";
 <basic_type_check> "type_name" "concept_display_name";
+<has_fields>;
 <field> "field_name" "field_type_name" "field_type_id"
   <required>;
   <optional>;
 ;
+<player_index> "player_index_field_name";
+<tags>;
+<localisedstring>;
 <signalid>;
 
 
 
 position
 <basic_type_check> "table" "Position";
+<has_fields>;
 <field> "x" "double" "i__double" <required>;;
 <field> "y" "double" "i__double" <required>;;
 
 chunkposition
 <basic_type_check> "table" "ChunkPosition";
+<has_fields>;
 <field> "x" "int" "i__int" <required>;;
 <field> "y" "int" "i__int" <required>;;
 
 tileposition
 <basic_type_check> "table" "TilePosition";
+<has_fields>;
 <field> "x" "int" "i__int" <required>;;
 <field> "y" "int" "i__int" <required>;;
 
 boundingbox
 <basic_type_check> "table" "BoundingBox";
+<has_fields>;
 <field> "left_top" "Position" "n__position" <required>;;
 <field> "right_top" "Position" "n__position" <required>;;
 <field> "orientation" "float" "i__float" <optional>;;
@@ -348,6 +355,7 @@ boundingbox
 
 simpleitemstack
 <basic_type_check> "table" "SimpleItemStack";
+<has_fields>;
 <field> "name" "string" "i__string" <required>;;
 <field> "count" "uint" "i__uint" <optional>;;
 <field> "health" "float" "i__float" <optional>;;
@@ -357,26 +365,33 @@ simpleitemstack
 
 oldtileandposition
 <basic_type_check> "table" "OldTileAndPosition";
+<has_fields>;
 <field> "old_tile" "LuaTilePrototype" "a__luatileprototype" <required>;;
 <field> "position" "TilePosition" "n__tileposition" <required>;;
 
 tags
+<basic_type_check> "table" "Tags";
+<tags>;
 
 displayresolution
 <basic_type_check> "table" "DisplayResolution";
+<has_fields>;
 <field> "width" "uint" "i__uint" <required>;;
 <field> "height" "uint" "i__uint" <required>;;
 
 localisedstring
+<localisedstring>;
 
 signalid
 <basic_type_check> "table" "SignalID";
+<has_fields>;
 <field> "name" "string" "i__string" <optional>;;
 <field> "type" "string" "i__string" <required>;;
 <signalid>;
 
 waypoint
 <basic_type_check> "table" "WayPoint";
+<has_fields>;
 <field> "player_index" "uint" "i__uint" <required>;;
 <field> "waypoint_index" "uint" "i__uint" <required>;;
 <player_index> "player_index";

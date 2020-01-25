@@ -1,7 +1,7 @@
 {
-  "name": "{{mod_name}}",
-  "version": "{{version}}",
-  "factorio_version": "{{factorio_version}}",
+  "name": "RaiseEventProtection",
+  "version": "0.18.1",
+  "factorio_version": "0.18",
   "title": "Raise Event Protection",
   "author": "JanSharp",
   "contact": "",

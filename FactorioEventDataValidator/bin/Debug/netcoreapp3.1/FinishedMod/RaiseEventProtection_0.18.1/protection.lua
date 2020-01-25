@@ -1,7 +1,7 @@
 
-local validators = require("__RaiseEventProtection__/validators")
+local validators = require("__RaiseEventProtection__/validators.lua")
 -- stupid name, but who cares :)
-local filterers = require("__RaiseEventProtection__/filters")
+local filterers = require("__RaiseEventProtection__/filters.lua")
 
 local function opt_next(t, k)
   if k then return end
@@ -17,9 +17,9 @@ end
 
 local events_to_ignore = {
   -- generated - all events with 0 fields besides name and tick
-  --<ignore_event>
-  [defines.events["{{event_name}}"]] = true,
-  --</ignore_event>
+  [defines.events["on_tick"]] = true,
+  [defines.events["on_game_created_from_scenario"]] = true,
+
 }
 
 local original_handlers = {}

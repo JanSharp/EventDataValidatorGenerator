@@ -14,7 +14,7 @@ namespace FactorioEventDataValidator
         public const string SourceLuaDir = "../../../Lua";
         public const string TargetLuaDir = "FinishedMod";
         public const string ModName = "RaiseEventProtection";
-        public const string ValidatorFile = "validator.lua";
+        public const string ValidatorFile = "protection.lua";
         public const string ValidatorsFile = "validators.lua";
         public const string InfoFile = "info.json";
         public static readonly List<string> IncludeFiles = new List<string>()
@@ -23,6 +23,7 @@ namespace FactorioEventDataValidator
             //".vscode/settings.json",
             "filters.lua",
             "all-entity-types.lua",
+            "changelog.txt",
             "LICENSE",
             "locale/en/RaiseEventProtection.cfg",
         };
