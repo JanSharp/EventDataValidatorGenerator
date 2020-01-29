@@ -5198,9 +5198,9 @@ return {
     if value then
       n__position(value, source_mod_name, "on_script_trigger_effect", "target_position")
     end
-    value = data["target"]
+    value = data["target_entity"]
     if value then
-      a__luaentity(value, source_mod_name, "on_script_trigger_effect", "target")
+      a__luaentity(value, source_mod_name, "on_script_trigger_effect", "target_entity")
     end
     value = data["surface_index"]
       if not game.surfaces[value] then

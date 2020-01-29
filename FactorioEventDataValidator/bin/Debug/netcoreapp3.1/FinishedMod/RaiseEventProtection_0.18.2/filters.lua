@@ -45,6 +45,10 @@ local raw_definitions = {
   },
   ["vehicle"] = {
     "car",
+    "artillery-wagon",
+    "cargo-wagon",
+    "fluid-wagon",
+    "locomotive",
   },
   ["turret"] = {
     "turret",

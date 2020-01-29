@@ -17,12 +17,12 @@ namespace FactorioEventDataValidator.Data
                 typeString = "number",
             } },
             { "i__double", new ContentTypeBuiltin() {
-				readableName = "double",
+                readableName = "double",
                 name = "double",
                 typeString = "number",
             } },
             { "i__int", new ContentTypeBuiltin() {
-				readableName = "int",
+                readableName = "int",
                 name = "int",
                 typeString = "number",
                 minValue = -2147483648,
@@ -30,7 +30,7 @@ namespace FactorioEventDataValidator.Data
                 integer = true,
             } },
             { "i__int8", new ContentTypeBuiltin() {
-				readableName = "int8",
+                readableName = "int8",
                 name = "int8",
                 typeString = "number",
                 minValue = -128,
@@ -38,7 +38,7 @@ namespace FactorioEventDataValidator.Data
                 integer = true,
             } },
             { "i__uint", new ContentTypeBuiltin() {
-				readableName = "uint",
+                readableName = "uint",
                 name = "uint",
                 typeString = "number",
                 minValue = 0,
@@ -46,7 +46,7 @@ namespace FactorioEventDataValidator.Data
                 integer = true,
             } },
             { "i__uint8", new ContentTypeBuiltin() {
-				readableName = "uint8",
+                readableName = "uint8",
                 name = "uint8",
                 typeString = "number",
                 minValue = 0,
@@ -62,7 +62,7 @@ namespace FactorioEventDataValidator.Data
                 integer = true,
             } },
             { "i__uint64", new ContentTypeBuiltin() {
-				readableName = "uint64",
+                readableName = "uint64",
                 name = "uint64",
                 typeString = "number",
                 minValue = 0,
@@ -70,17 +70,17 @@ namespace FactorioEventDataValidator.Data
                 integer = true,
             } },
             { "i__string", new ContentTypeBuiltin() {
-				readableName = "string",
+                readableName = "string",
                 name = "string",
                 typeString = "string",
             } },
             { "i__boolean", new ContentTypeBuiltin() {
-				readableName = "boolean",
+                readableName = "boolean",
                 name = "boolean",
                 typeString = "boolean",
             } },
             { "i__table", new ContentTypeBuiltin() {
-				readableName = "table",
+                readableName = "table",
                 name = "table",
                 typeString = "table",
             } },
