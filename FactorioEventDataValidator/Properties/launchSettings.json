@@ -2,7 +2,7 @@
   "profiles": {
     "FactorioEventDataValidator": {
       "commandName": "Project",
-      "commandLineArgs": "0.18.1"
+      "commandLineArgs": "0.18.2"
     }
   }
 }

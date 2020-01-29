@@ -81,7 +81,11 @@ namespace FactorioEventDataValidator
             StringBuilder sb = new StringBuilder();
             Resolve(sb, validatorSource, new List<(Dictionary<string, string> labels, Resolver subResolver)>()
             {
-                (new Dictionary<string, string>(), t => t switch
+                (new Dictionary<string, string>()
+                {
+                    { "mod_name", ModName },
+                },
+                t => t switch
                 {
                     "ignore_event" => events.Where(ed => ed.contents.Count == 0).Select(ed => (new Dictionary<string, string>()
                     {
@@ -99,7 +103,11 @@ namespace FactorioEventDataValidator
             validatorsSource = PreProcess(validatorsSource);
             Resolve(sb, validatorsSource, new List<(Dictionary<string, string> labels, Resolver subResolver)>()
             {
-                (new Dictionary<string, string>(), t => t switch
+                (new Dictionary<string, string>()
+                {
+                    { "mod_name", ModName },
+                },
+                t => t switch
                 {
                     "concept_validator" => concepts.Select(cd => (new Dictionary<string, string>()
                     {
@@ -170,7 +178,7 @@ namespace FactorioEventDataValidator
                 string dest = Path.Combine(targetDir.FullName, filename);
                 if (!Directory.Exists(Path.GetDirectoryName(dest)))
                     Directory.CreateDirectory(Path.GetDirectoryName(dest));
-                File.Copy(source, dest, overwrite: true);
+                File.WriteAllText(dest, File.ReadAllText(source).Replace("{{mod_name}}", ModName));
             }
         }
 

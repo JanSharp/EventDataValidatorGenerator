@@ -1,8 +1,13 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.18.?
-Date: ????
+Version: 0.18.2
+Date: 2020.01.30
+  Changes:
+    - Remove lua global "__event_data_validator_type_map" which was floating around
   Bugfixes:
     - Fix the filter "vehicle" not including all rolling stocks
+    - Change "target" to "entity_target" for "on_script_trigger_effect"
+      (event docs were wrong in 1.18.1)
+    - Fix custom-input handlers not getting registered
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.1
 Date: 2020.01.25

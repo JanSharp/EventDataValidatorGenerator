@@ -1,7 +1,7 @@
 
-local validators = require("__RaiseEventProtection__/validators.lua")
--- stupid name, but who cares :)
-local filterers = require("__RaiseEventProtection__/filters.lua")
+local validators = require("__{{mod_name}}__/validators.lua")
+local filterers = require("__{{mod_name}}__/filters.lua") -- stupid name, but who cares :)
+local filter_type_map = filterers.type_map
 
 local function opt_next(t, k)
   if k then return end
@@ -48,7 +48,7 @@ function new_script.on_event(event, f, filters)
             local mod_name = data.mod_name
             if mod_name then
               local entity, entity_type = validator(data, mod_name) -- the validator returns the entity and it's type for anything that can be filtered
-              if not filterer(entity, entity_type) then return end
+              if not filterer(entity, entity_type, filter_type_map) then return end
             end
             return f(data) -- make it a tail call
           end, filters)

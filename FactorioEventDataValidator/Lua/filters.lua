@@ -18,7 +18,7 @@
 -- "ghost_name": Additional fields:
 --     name :: string: The ghost prototype name
 
-local all_types = require("__RaiseEventProtection__/all-entity-types.lua")
+local all_types = require("__{{mod_name}}__/all-entity-types.lua")
 
 local raw_definitions = {
   ["ghost"] = {
@@ -98,7 +98,6 @@ local raw_definitions = {
 
 
 local type_map = {}
-__event_data_validator_type_map = type_map
 local filter_map = {}
 
 for _, type_name in pairs(all_types) do
@@ -215,11 +214,11 @@ local function generate_filter(filters)
     end
   end
 
-  local func_str = "return function(entity,entity_type)"
+  local func_str = "return function(entity,entity_type,type_map)"
 
   if has_special_check then
     has_special_check = false
-    func_str = func_str .. "local btest,num=bit32.btest,__event_data_validator_type_map[entity_type];"
+    func_str = func_str .. "local btest,num=bit32.btest,type_map[entity_type];"
   end
   for field, _ in pairs(needed_localed_fields) do
     func_str = func_str .. "local " .. field .. "=entity." .. field .. ";"
@@ -239,4 +238,5 @@ end
 
 return {
   generate_filter = generate_filter,
+  type_map = type_map,
 }
