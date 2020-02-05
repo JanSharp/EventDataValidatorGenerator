@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.18.3
+Date: ????
+  Bugfixes:
+    - Disallow defining filters when registering multiple handlers at once.
+      Just like the game does
+    - Move check if an event should not be wrapped to the correct location
+---------------------------------------------------------------------------------------------------
 Version: 0.18.2
 Date: 2020.01.30
   Changes:
