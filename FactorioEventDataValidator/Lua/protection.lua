@@ -40,31 +40,32 @@ function new_script.on_event(event, f, filters)
         old_script.on_event(e, f) -- custom-inputs. (can't have filters)
       else
         if events_to_ignore[event] then
-          return old_script.on_event(event, f, filters) -- i'll just add filters, because why not
-        end
+          old_script.on_event(event, f, filters) -- i'll just add filters, because why not
+        else
 
-        local validator = validators[e]
-        original_handlers[e] = f
+          local validator = validators[e]
+          original_handlers[e] = f
 
-        if filters then -- has filters
-          filterer = filterer or filterers.generate_filter(filters)
-          return old_script.on_event(e, function(data)
-            local mod_name = data.mod_name
-            if mod_name then
-              local entity, entity_type = validator(data, mod_name) -- the validator returns the entity and it's type for anything that can be filtered
-              if not filterer(entity, entity_type, filter_type_map) then return end
-            end
-            return f(data) -- make it a tail call
-          end, filters)
+          if filters then -- has filters
+            filterer = filterer or filterers.generate_filter(filters)
+            return old_script.on_event(e, function(data)
+              local mod_name = data.mod_name
+              if mod_name then
+                local entity, entity_type = validator(data, mod_name) -- the validator returns the entity and it's type for anything that can be filtered
+                if not filterer(entity, entity_type, filter_type_map) then return end
+              end
+              return f(data) -- make it a tail call
+            end, filters)
 
-        else -- no filters
-          return old_script.on_event(e, function(data)
-            local mod_name = data.mod_name
-            if mod_name then
-              validator(data, mod_name)
-            end
-            return f(data) -- make it a tail call
-          end)
+          else -- no filters
+            return old_script.on_event(e, function(data)
+              local mod_name = data.mod_name
+              if mod_name then
+                validator(data, mod_name)
+              end
+              return f(data) -- make it a tail call
+            end)
+          end
         end
       end
     end
