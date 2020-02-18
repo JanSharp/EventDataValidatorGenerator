@@ -4091,6 +4091,24 @@ return {
         }
       end
   end,
+  [defines.events["on_player_set_quick_bar_slot"]] = function(data, source_mod_name)
+    local value
+    value = data["player_index"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_player_set_quick_bar_slot"},
+        {"raise-event-protection.field-missing", "player_index", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_player_set_quick_bar_slot", "player_index")
+    value = data["player_index"]
+      if not game.get_player(value) then
+        error{"",
+         {"raise-event-protection.error-prefix", source_mod_name, "on_player_set_quick_bar_slot"},
+         {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
+        }
+      end
+  end,
   [defines.events["on_player_setup_blueprint"]] = function(data, source_mod_name)
     local value
     value = data["player_index"]
@@ -4554,6 +4572,24 @@ return {
       if not game.get_player(value) then
         error{"",
          {"raise-event-protection.error-prefix", source_mod_name, "on_pre_player_removed"},
+         {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
+        }
+      end
+  end,
+  [defines.events["on_pre_player_toggled_map_editor"]] = function(data, source_mod_name)
+    local value
+    value = data["player_index"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_pre_player_toggled_map_editor"},
+        {"raise-event-protection.field-missing", "player_index", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_pre_player_toggled_map_editor", "player_index")
+    value = data["player_index"]
+      if not game.get_player(value) then
+        error{"",
+         {"raise-event-protection.error-prefix", source_mod_name, "on_pre_player_toggled_map_editor"},
          {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
         }
       end

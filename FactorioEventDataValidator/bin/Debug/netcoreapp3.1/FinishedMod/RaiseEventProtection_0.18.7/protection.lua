@@ -29,8 +29,8 @@ local new_script = {}
 
 function new_script.on_event(event, f, filters)
   if f then
-    if events_to_ignore[event] then
-      return old_script.on_event(event, f, filters) -- i'll just add filters, because why not
+    if filters and type(event) == "table" then
+      old_script.on_event(event, f, filters) -- this will throw an error, informing about filters being disallowed when event is a table (or a different error, if there are more issues)
     end
 
     local filterer
@@ -39,6 +39,10 @@ function new_script.on_event(event, f, filters)
       if type(e) == "string" then
         old_script.on_event(e, f) -- custom-inputs. (can't have filters)
       else
+        if events_to_ignore[event] then
+          return old_script.on_event(event, f, filters) -- i'll just add filters, because why not
+        end
+
         local validator = validators[e]
         original_handlers[e] = f
 

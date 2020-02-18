@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.3
 Date: ????
+  Changes:
+    - Update validators for game version 0.18.7
   Bugfixes:
     - Disallow defining filters when registering multiple handlers at once.
       Just like the game does
