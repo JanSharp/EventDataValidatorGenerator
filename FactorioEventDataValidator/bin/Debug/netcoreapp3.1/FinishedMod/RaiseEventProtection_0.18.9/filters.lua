@@ -30,7 +30,7 @@
 -- "damage-type": Additional fields:
 --     type :: string: A LuaDamagePrototype name
 
-local all_types = require("__{{mod_name}}__/all-entity-types.lua")
+local all_types = require("__RaiseEventProtection__/all-entity-types.lua")
 
 local raw_definitions = {
   ["ghost"] = {

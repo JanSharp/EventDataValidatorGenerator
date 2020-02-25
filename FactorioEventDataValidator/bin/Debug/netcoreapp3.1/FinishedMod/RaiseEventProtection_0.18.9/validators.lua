@@ -1910,6 +1910,8 @@ return {
       }
     end
       a__luaentity(value, source_mod_name, "on_entity_cloned", "destination")
+    local e = data["source"]
+    return e, e.type
   end,
   [defines.events["on_entity_damaged"]] = function(data, source_mod_name)
     local value
@@ -1981,6 +1983,10 @@ return {
     value = data["force"]
     if value then
       a__luaforce(value, source_mod_name, "on_entity_died", "force")
+    end
+    value = data["damage_type"]
+    if value then
+      a__luadamageprototype(value, source_mod_name, "on_entity_died", "damage_type")
     end
     local e = data["entity"]
     return e, e.type
@@ -4332,6 +4338,10 @@ return {
       }
     end
       a__luaentityprototype(value, source_mod_name, "on_post_entity_died", "prototype")
+    value = data["damage_type"]
+    if value then
+      a__luadamageprototype(value, source_mod_name, "on_post_entity_died", "damage_type")
+    end
     value = data["corpses"]
     if not value then
       error{"",
@@ -5281,6 +5291,7 @@ return {
           {"raise-event-protection.field-with-wrong-type", "radar", "radar", "radar"},
         }
       end
+    return e, e_type
   end,
   [defines.events["on_selected_entity_changed"]] = function(data, source_mod_name)
     local value

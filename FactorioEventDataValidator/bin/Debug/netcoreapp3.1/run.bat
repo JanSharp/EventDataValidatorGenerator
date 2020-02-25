@@ -1,1 +1,1 @@
-FactorioEventDataValidator.exe 0.18.7
+FactorioEventDataValidator.exe 0.18.9
