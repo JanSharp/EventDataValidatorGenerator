@@ -2929,6 +2929,14 @@ return {
       }
     end
       i__uint(value, source_mod_name, "on_player_alt_selected_area", "player_index")
+    value = data["surface"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_player_alt_selected_area"},
+        {"raise-event-protection.field-missing", "surface", "LuaSurface"},
+      }
+    end
+      a__luasurface(value, source_mod_name, "on_player_alt_selected_area", "surface")
     value = data["area"]
     if not value then
       error{"",
@@ -3356,6 +3364,14 @@ return {
       }
     end
       i__uint(value, source_mod_name, "on_player_deconstructed_area", "player_index")
+    value = data["surface"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_player_deconstructed_area"},
+        {"raise-event-protection.field-missing", "surface", "LuaSurface"},
+      }
+    end
+      a__luasurface(value, source_mod_name, "on_player_deconstructed_area", "surface")
     value = data["area"]
     if not value then
       error{"",
@@ -4057,6 +4073,14 @@ return {
       }
     end
       i__uint(value, source_mod_name, "on_player_selected_area", "player_index")
+    value = data["surface"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_player_selected_area"},
+        {"raise-event-protection.field-missing", "surface", "LuaSurface"},
+      }
+    end
+      a__luasurface(value, source_mod_name, "on_player_selected_area", "surface")
     value = data["area"]
     if not value then
       error{"",
@@ -4125,6 +4149,14 @@ return {
       }
     end
       i__uint(value, source_mod_name, "on_player_setup_blueprint", "player_index")
+    value = data["surface"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_player_setup_blueprint"},
+        {"raise-event-protection.field-missing", "surface", "LuaSurface"},
+      }
+    end
+      a__luasurface(value, source_mod_name, "on_player_setup_blueprint", "surface")
     value = data["area"]
     if not value then
       error{"",
