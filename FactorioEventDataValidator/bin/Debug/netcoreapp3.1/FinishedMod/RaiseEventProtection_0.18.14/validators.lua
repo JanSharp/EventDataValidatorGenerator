@@ -827,7 +827,6 @@ function f__defines__gui_type(value, source_mod_name, event_name, field_name, fi
     value == defines.gui_type.equipment or
     value == defines.gui_type.logistic or
     value == defines.gui_type.other_player or
-    value == defines.gui_type.kills or
     value == defines.gui_type.permissions or
     value == defines.gui_type.tutorials or
     value == defines.gui_type.custom or

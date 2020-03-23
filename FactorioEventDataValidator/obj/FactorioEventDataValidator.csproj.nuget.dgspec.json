@@ -1,21 +1,18 @@
 {
   "format": 1,
   "restore": {
-    "C:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj": {}
+    "D:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj": {}
   },
   "projects": {
-    "C:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj": {
+    "D:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj",
+        "projectUniqueName": "D:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj",
         "projectName": "FactorioEventDataValidator",
-        "projectPath": "C:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj",
+        "projectPath": "D:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\FactorioEventDataValidator.csproj",
         "packagesPath": "C:\\Users\\janmi\\.nuget\\packages\\",
-        "outputPath": "C:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\obj\\",
+        "outputPath": "D:\\dev\\projects\\csharp\\cmd\\FactorioEventDataValidator\\FactorioEventDataValidator\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
           "C:\\Users\\janmi\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
