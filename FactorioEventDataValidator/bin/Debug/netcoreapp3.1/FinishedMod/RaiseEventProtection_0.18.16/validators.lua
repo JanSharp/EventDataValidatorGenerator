@@ -55,9 +55,9 @@ end
 -- predefine all locals so that the upvalues link correctly
 local i__uint
 local f__defines__behavior_result
+local i__boolean
 local a__luasurface
 local a__luaforce
-local i__boolean
 local a__luaentity
 local r__n__tileposition
 local a__luaunitgroup
@@ -607,6 +607,15 @@ function f__defines__behavior_result(value, source_mod_name, event_name, field_n
     }
   end
 end
+function i__boolean(value, source_mod_name, event_name, field_name, field_names, field_name_count)
+  local value_type = advanced_type(value)
+  if value_type ~= "boolean" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "boolean", value_type},
+    }
+  end
+end
 function a__luasurface(value, source_mod_name, event_name, field_name, field_names, field_name_count)
   local value_type = advanced_type(value)
   if value_type ~= "LuaSurface" then
@@ -622,15 +631,6 @@ function a__luaforce(value, source_mod_name, event_name, field_name, field_names
     error{"",
       {"raise-event-protection.error-prefix", source_mod_name, event_name},
       {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "LuaForce", value_type},
-    }
-  end
-end
-function i__boolean(value, source_mod_name, event_name, field_name, field_names, field_name_count)
-  local value_type = advanced_type(value)
-  if value_type ~= "boolean" then
-    error{"",
-      {"raise-event-protection.error-prefix", source_mod_name, event_name},
-      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "boolean", value_type},
     }
   end
 end
@@ -1221,6 +1221,14 @@ return {
       }
     end
       f__defines__behavior_result(value, source_mod_name, "on_ai_command_completed", "result")
+    value = data["was_distracted"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_ai_command_completed"},
+        {"raise-event-protection.field-missing", "was_distracted", "boolean"},
+      }
+    end
+      i__boolean(value, source_mod_name, "on_ai_command_completed", "was_distracted")
   end,
   [defines.events["on_area_cloned"]] = function(data, source_mod_name)
     local value
