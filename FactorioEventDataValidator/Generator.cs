@@ -200,15 +200,13 @@ namespace FactorioEventDataValidator
             {
                 string currentToResolve = toResolve;
                 foreach (var kvp in itemResolveData.labels ?? new Dictionary<string, string>())
-                    currentToResolve = currentToResolve.Replace("{{" + kvp.Key + "}}", kvp.Value);
+                    currentToResolve = currentToResolve.Replace($"{{{{{kvp.Key}}}}}", kvp.Value);
 
                 foreach (Match itemMatch in ResolveRegex.Matches(currentToResolve))
                 {
                     sb.Append(itemMatch.Groups["text"].Value);
                     if (itemMatch.Groups["tag"].Success)
-                    {
                         Resolve(sb, itemMatch.Groups["tagContent"].Value, itemResolveData.subResolver(itemMatch.Groups["tag"].Value));
-                    }
                 }
             }
         }
