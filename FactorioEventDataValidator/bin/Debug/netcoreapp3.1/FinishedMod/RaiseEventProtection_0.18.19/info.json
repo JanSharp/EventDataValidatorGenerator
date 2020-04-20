@@ -1,0 +1,13 @@
+{
+  "name": "RaiseEventProtection",
+  "version": "0.18.19",
+  "factorio_version": "0.18",
+  "title": "Raise Event Protection",
+  "author": "JanSharp",
+  "contact": "",
+  "homepage": "https://github.com/JanSharp/EventDataValidatorGenerator",
+  "description": "A mod for other mods to use to protect them from bad script.raise_event calls (with game events), and applies event filters on them when defined. This mod can cause mods using it to slow down if any mod uses script.raise_event.\n\nFor modders, check the modportal for usage and quirks.",
+  "dependencies": [
+
+  ]
+}

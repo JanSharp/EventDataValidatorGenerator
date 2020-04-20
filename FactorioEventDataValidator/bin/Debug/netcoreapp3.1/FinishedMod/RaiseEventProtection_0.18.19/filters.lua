@@ -33,7 +33,7 @@
 --     comparison :: ComparatorString
 --     value :: float: The value to compare against.
 
-local all_types = require("__{{mod_name}}__/all-entity-types.lua")
+local all_types = require("__RaiseEventProtection__/all-entity-types.lua")
 
 local raw_definitions = {
   ["ghost"] = {
