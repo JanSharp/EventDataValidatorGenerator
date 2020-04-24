@@ -4696,6 +4696,54 @@ return {
         }
       end
   end,
+  [defines.events["on_pre_script_inventory_resized"]] = function(data, source_mod_name)
+    local value
+    value = data["player_index"]
+    if value then
+      i__uint(value, source_mod_name, "on_pre_script_inventory_resized", "player_index")
+    end
+    value = data["mod"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_pre_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "mod", "string"},
+      }
+    end
+      i__string(value, source_mod_name, "on_pre_script_inventory_resized", "mod")
+    value = data["inventory"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_pre_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "inventory", "LuaInventory"},
+      }
+    end
+      a__luainventory(value, source_mod_name, "on_pre_script_inventory_resized", "inventory")
+    value = data["old_size"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_pre_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "old_size", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_pre_script_inventory_resized", "old_size")
+    value = data["new_size"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_pre_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "new_size", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_pre_script_inventory_resized", "new_size")
+    value = data["player_index"]
+    if value then
+      if not game.get_player(value) then
+        error{"",
+         {"raise-event-protection.error-prefix", source_mod_name, "on_pre_script_inventory_resized"},
+         {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
+        }
+      end
+    end
+  end,
   [defines.events["on_pre_surface_cleared"]] = function(data, source_mod_name)
     local value
     value = data["surface_index"]
@@ -5233,6 +5281,62 @@ return {
       if not game.get_player(value) then
         error{"",
          {"raise-event-protection.error-prefix", source_mod_name, "on_runtime_mod_setting_changed"},
+         {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
+        }
+      end
+    end
+  end,
+  [defines.events["on_script_inventory_resized"]] = function(data, source_mod_name)
+    local value
+    value = data["player_index"]
+    if value then
+      i__uint(value, source_mod_name, "on_script_inventory_resized", "player_index")
+    end
+    value = data["mod"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "mod", "string"},
+      }
+    end
+      i__string(value, source_mod_name, "on_script_inventory_resized", "mod")
+    value = data["inventory"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "inventory", "LuaInventory"},
+      }
+    end
+      a__luainventory(value, source_mod_name, "on_script_inventory_resized", "inventory")
+    value = data["old_size"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "old_size", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_script_inventory_resized", "old_size")
+    value = data["new_size"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "new_size", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "on_script_inventory_resized", "new_size")
+    value = data["overflow_inventory"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
+        {"raise-event-protection.field-missing", "overflow_inventory", "LuaInventory"},
+      }
+    end
+      a__luainventory(value, source_mod_name, "on_script_inventory_resized", "overflow_inventory")
+    value = data["player_index"]
+    if value then
+      if not game.get_player(value) then
+        error{"",
+         {"raise-event-protection.error-prefix", source_mod_name, "on_script_inventory_resized"},
          {"raise-event-protection.field-with-invalid-value-simple", "player_index", "player index"},
         }
       end
