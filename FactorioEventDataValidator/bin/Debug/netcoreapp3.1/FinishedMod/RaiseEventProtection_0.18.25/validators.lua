@@ -2182,6 +2182,17 @@ return {
     end
       i__boolean(value, source_mod_name, "on_force_friends_changed", "added")
   end,
+  [defines.events["on_force_reset"]] = function(data, source_mod_name)
+    local value
+    value = data["force"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "on_force_reset"},
+        {"raise-event-protection.field-missing", "force", "LuaForce"},
+      }
+    end
+      a__luaforce(value, source_mod_name, "on_force_reset", "force")
+  end,
   [defines.events["on_forces_merged"]] = function(data, source_mod_name)
     local value
     value = data["source_name"]
