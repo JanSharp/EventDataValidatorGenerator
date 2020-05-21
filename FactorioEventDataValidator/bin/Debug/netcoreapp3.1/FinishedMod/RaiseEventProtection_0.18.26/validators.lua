@@ -87,9 +87,10 @@ local a__luaequipmentgrid
 local f__defines__direction
 local z__c__k__i__uint__v__a__luaentity
 local c__k__i__uint__v__a__luaentity
-local r__n__waypoint
+local r__n__on_script_path_request_finished_waypoint
 local a__luatrain
 local f__defines__train_state
+local r__n__script_raised_set_tiles_tile
 local i__int
 local r__i__string
 local n__position
@@ -102,8 +103,9 @@ local n__tags
 local n__displayresolution
 local n__localisedstring
 local n__signalid
-local n__waypoint
--- concepts (and 'Waypoint')
+local n__on_script_path_request_finished_waypoint
+local n__script_raised_set_tiles_tile
+-- concepts (and special, "hardcoded" (manually defined) ones, where the type is defined locally on the events page)
 local values_for_signalid_type = {
   ["item"] = true,
   ["fluid"] = true,
@@ -513,7 +515,7 @@ function n__signalid(data, source_mod_name, event_name, field_name, field_names,
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end
-function n__waypoint(data, source_mod_name, event_name, field_name, field_names, field_name_count)
+function n__on_script_path_request_finished_waypoint(data, source_mod_name, event_name, field_name, field_names, field_name_count)
   local data_type = advanced_type(data)
   if data_type ~= "table" then
     error{"",
@@ -528,32 +530,60 @@ function n__waypoint(data, source_mod_name, event_name, field_name, field_names,
   else
     field_name_count = field_name_count + 1
   end
-  value = data["player_index"]
-  field_names[field_name_count] = "player_index"
+  value = data["position"]
+  field_names[field_name_count] = "position"
   if not value then
     error{"",
       {"raise-event-protection.error-prefix", source_mod_name, event_name},
-      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "uint"},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "Position"},
     }
   end
-    i__uint(value, source_mod_name, event_name, nil, field_names, field_name_count)
-  value = data["waypoint_index"]
-  field_names[field_name_count] = "waypoint_index"
+    n__position(value, source_mod_name, event_name, nil, field_names, field_name_count)
+  value = data["needs_destroy_to_reach"]
+  field_names[field_name_count] = "needs_destroy_to_reach"
   if not value then
     error{"",
       {"raise-event-protection.error-prefix", source_mod_name, event_name},
-      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "uint"},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "boolean"},
     }
   end
-    i__uint(value, source_mod_name, event_name, nil, field_names, field_name_count)
-  value = data["player_index"]
-    field_names[field_name_count] = "player_index"
-    if not game.get_player(value) then
-      error{"",
-        {"raise-event-protection.error-prefix", source_mod_name, event_name},
-        {"raise-event-protection.field-with-invalid-value-simple", evaluate_full_field_name(field_name, field_names), "player index"},
-      }
-    end
+    i__boolean(value, source_mod_name, event_name, nil, field_names, field_name_count)
+  field_names[field_name_count] = nil
+  field_name_count = field_name_count - 1
+end
+function n__script_raised_set_tiles_tile(data, source_mod_name, event_name, field_name, field_names, field_name_count)
+  local data_type = advanced_type(data)
+  if data_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "Tile", data_type},
+    }
+  end
+  local value
+  if not field_names then
+    field_names = {field_name}
+    field_name_count = 2
+  else
+    field_name_count = field_name_count + 1
+  end
+  value = data["name"]
+  field_names[field_name_count] = "name"
+  if not value then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "string"},
+    }
+  end
+    i__string(value, source_mod_name, event_name, nil, field_names, field_name_count)
+  value = data["position"]
+  field_names[field_name_count] = "position"
+  if not value then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-missing", evaluate_full_field_name(field_name, field_names), "Position"},
+    }
+  end
+    n__position(value, source_mod_name, event_name, nil, field_names, field_name_count)
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end
@@ -1063,7 +1093,7 @@ function c__k__i__uint__v__a__luaentity(value, source_mod_name, event_name, fiel
   field_names[field_name_count] = nil
   field_name_count = field_name_count - 1
 end
-function r__n__waypoint(value, source_mod_name, event_name, field_name, field_names, field_name_count)
+function r__n__on_script_path_request_finished_waypoint(value, source_mod_name, event_name, field_name, field_names, field_name_count)
   local value_type = advanced_type(value)
   if value_type ~= "table" then
     error{"",
@@ -1080,7 +1110,7 @@ function r__n__waypoint(value, source_mod_name, event_name, field_name, field_na
   local array_length = 0
   for i, v in ipairs(value) do
     field_names[field_name_count] = i
-    n__waypoint(v, source_mod_name, event_name, nil, field_names, field_name_count)
+    n__on_script_path_request_finished_waypoint(v, source_mod_name, event_name, nil, field_names, field_name_count)
     array_length = i
   end
   field_names[field_name_count] = nil
@@ -1126,6 +1156,35 @@ function f__defines__train_state(value, source_mod_name, event_name, field_name,
     error{"",
       {"raise-event-protection.error-prefix", source_mod_name, event_name},
       {"raise-event-protection.field-with-wrong-value", evaluate_full_field_name(field_name, field_names), "defines.train_state", "defines.train_state"},
+    }
+  end
+end
+function r__n__script_raised_set_tiles_tile(value, source_mod_name, event_name, field_name, field_names, field_name_count)
+  local value_type = advanced_type(value)
+  if value_type ~= "table" then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-wrong-type", evaluate_full_field_name(field_name, field_names), "array of Tile", value_type},
+    }
+  end
+  if not field_names then
+    field_names = {field_name}
+    field_name_count = 2
+  else
+    field_name_count = field_name_count + 1
+  end
+  local array_length = 0
+  for i, v in ipairs(value) do
+    field_names[field_name_count] = i
+    n__script_raised_set_tiles_tile(v, source_mod_name, event_name, nil, field_names, field_name_count)
+    array_length = i
+  end
+  field_names[field_name_count] = nil
+  field_name_count = field_name_count - 1
+  if array_length ~= table_size(value) then
+    error{"",
+      {"raise-event-protection.error-prefix", source_mod_name, event_name},
+      {"raise-event-protection.field-with-invalid-array", evaluate_full_field_name(field_name, field_names), "array of Tile"},
     }
   end
 end
@@ -5357,7 +5416,7 @@ return {
     local value
     value = data["path"]
     if value then
-      r__n__waypoint(value, source_mod_name, "on_script_path_request_finished", "path")
+      r__n__on_script_path_request_finished_waypoint(value, source_mod_name, "on_script_path_request_finished", "path")
     end
     value = data["id"]
     if not value then
@@ -5850,5 +5909,31 @@ return {
     if value then
       n__tags(value, source_mod_name, "script_raised_revive", "tags")
     end
+  end,
+  [defines.events["script_raised_set_tiles"]] = function(data, source_mod_name)
+    local value
+    value = data["surface_index"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "script_raised_set_tiles"},
+        {"raise-event-protection.field-missing", "surface_index", "uint"},
+      }
+    end
+      i__uint(value, source_mod_name, "script_raised_set_tiles", "surface_index")
+    value = data["tiles"]
+    if not value then
+      error{"",
+        {"raise-event-protection.error-prefix", source_mod_name, "script_raised_set_tiles"},
+        {"raise-event-protection.field-missing", "tiles", "array of Tile"},
+      }
+    end
+      r__n__script_raised_set_tiles_tile(value, source_mod_name, "script_raised_set_tiles", "tiles")
+    value = data["surface_index"]
+      if not game.surfaces[value] then
+        error{"",
+          {"raise-event-protection.error-prefix", source_mod_name, "script_raised_set_tiles"},
+          {"raise-event-protection.field-with-invalid-value-simple", "surface_index", "surface index"},
+        }
+      end
   end,
 }

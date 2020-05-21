@@ -67,7 +67,7 @@ end
 --[[!local n__{{concept_name}}]] --[[!]]
 --</concept_validator>
 
--- concepts (and 'Waypoint')
+-- concepts (and special, "hardcoded" (manually defined) ones, where the type is defined locally on the events page)
 
 local values_for_signalid_type = {
   ["item"] = true,
@@ -127,23 +127,6 @@ function n__--[[!{{concept_name}}]] --[[!]](data, source_mod_name, event_name, f
   --</optional>
 
   --</field>
-
-  --<player_index>
-  value = data["{{player_index_field_name}}"]
-  --<optional>
-  if value then
-  --</optional>
-    field_names[field_name_count] = "{{player_index_field_name}}"
-    if not game.get_player(value) then
-      error{"",
-        {"raise-event-protection.error-prefix", source_mod_name, event_name},
-        {"raise-event-protection.field-with-invalid-value-simple", evaluate_full_field_name(field_name, field_names), "player index"},
-      }
-    end
-  --<optional>
-  end
-  --</optional>
-  --</player_index>
 
   --<signalid>
   -- the value of type is in value already in this case

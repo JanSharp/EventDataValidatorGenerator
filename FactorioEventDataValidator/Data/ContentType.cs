@@ -109,7 +109,8 @@ namespace FactorioEventDataValidator.Data
             #endregion
 
             #region Special (treated as Concepts)
-            { "n__waypoint", new ContentTypeConcept() { readableName = "Waypoint", name = "waypoint" } },
+            { "n__on_script_path_request_finished_waypoint", new ContentTypeConcept() { readableName = "Waypoint", name = "on_script_path_request_finished_waypoint" } },
+            { "n__script_raised_set_tiles_tile", new ContentTypeConcept() { readableName = "Tile", name = "script_raised_set_tiles_tile" } },
             #endregion
         };
 

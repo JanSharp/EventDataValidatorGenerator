@@ -86,7 +86,7 @@ namespace FactorioEventDataValidator
                 {
                     contents.Add(new EventContent()
                     {
-                        type = GetContentType(GetClassXElement(itemContent, "param-type")),
+                        type = GetContentType(GetClassXElement(itemContent, "param-type"), result),
                         name = GetClassXElement(itemContent, "param-name").Value,
                         //description = Regex.Match(itemContent.Value, @"::\s*(.*)").Groups.Cast<Group>().Last().Captures.First().Value,
                         optional = (GetClassXElement(itemContent, "opt") != null || itemContent.Value.Contains("or nil")) ? true : false,
@@ -96,28 +96,39 @@ namespace FactorioEventDataValidator
             return result;
         }
 
-        static ContentType GetContentType(XElement typeElem)
+        static ContentType GetContentType(XElement typeElem, EventDefinition eventDefinition)
         {
             string valueTrimmed = typeElem.Value.Trim();
             if (valueTrimmed.StartsWith("array of"))
-                return ContentType.GetArray(GetContentType(GetClassXElement(typeElem, "param-type")));
+                return ContentType.GetArray(GetContentType(GetClassXElement(typeElem, "param-type"), eventDefinition));
             if (valueTrimmed.StartsWith("dictionary"))
                 return ContentType.GetDictionary(
-                    GetContentType(GetClassXElement(typeElem, "param-type")),
-                    GetContentType(GetClassXElement(typeElem, "param-type", c => c.Skip(1))));
+                    GetContentType(GetClassXElement(typeElem, "param-type"), eventDefinition),
+                    GetContentType(GetClassXElement(typeElem, "param-type", c => c.Skip(1)), eventDefinition));
 
             XElement refElem = typeElem.Element("a");
             if (refElem == null) // edge case where the type is defined locally on the events page - hard coded
             {
-                return valueTrimmed switch
+                Exception GetMissingHardcodedDefException()
+                    => new Exception($"Missing hard coded defintion for '{valueTrimmed}' for event '{eventDefinition.name}'.");
+                return eventDefinition.name switch
                 {
-                    "Waypoint" => ContentType.Get("Concepts.html#Waypoint"), // hard coded in ContentType.AllTypes
-                    _ => throw new Exception("Missing hard coded defintion for '" + valueTrimmed + "'."),
+                    "on_script_path_request_finished" => valueTrimmed switch
+                    {
+                        "Waypoint" => ContentType.Get("Concepts.html#on_script_path_request_finished_waypoint"), // hard coded in ContentType.AllTypes
+                        _ => throw GetMissingHardcodedDefException(),
+                    },
+                    "script_raised_set_tiles" => valueTrimmed switch
+                    {
+                        "Tile" => ContentType.Get("Concepts.html#script_raised_set_tiles_tile"), // hard coded in ContentType.AllTypes
+                        _ => throw GetMissingHardcodedDefException(),
+                    },
+                    _ => throw GetMissingHardcodedDefException(),
                 };
             }
             string typeString = refElem.Attribute("href").Value;
             if (typeString == "LuaLazyLoadedValue.html")
-                return ContentType.GetLazy(GetContentType(GetClassXElement(typeElem, "param-type")));
+                return ContentType.GetLazy(GetContentType(GetClassXElement(typeElem, "param-type"), eventDefinition));
             return ContentType.Get(typeString);
         }
 

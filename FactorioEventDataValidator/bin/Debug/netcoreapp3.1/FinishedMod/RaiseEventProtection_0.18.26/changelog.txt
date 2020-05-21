@@ -1,9 +1,18 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.18.26
+Date: 2020-05-21
+  Changes:
+    - Update for game version 0.18.26
+      - Add 'script_raised_set_tiles' event
+  Bugfixes:
+    - Fix on_script_path_request_finished Waypoint validation
+      (it was validated as on_cutscene_waypoint_reached)
+---------------------------------------------------------------------------------------------------
 Version: 0.18.25
 Date: 2020-05-20
   Changes:
     - Update for game version 0.18.25
-      - Add on_force_reset event
+      - Add 'on_force_reset' event
 ---------------------------------------------------------------------------------------------------
 Version: 0.18.20
 Date: 2020-04-24

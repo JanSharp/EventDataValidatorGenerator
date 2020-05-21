@@ -324,7 +324,6 @@ on_unit_removed_from_group
   <required>;
   <optional>;
 ;
-<player_index> "player_index_field_name";
 <tags>;
 <localisedstring>;
 <signalid>;
@@ -393,9 +392,14 @@ signalid
 <field> "type" "string" "i__string" <required>;;
 <signalid>;
 
-waypoint
+on_script_path_request_finished_waypoint
 <basic_type_check> "table" "WayPoint";
 <has_fields>;
-<field> "player_index" "uint" "i__uint" <required>;;
-<field> "waypoint_index" "uint" "i__uint" <required>;;
-<player_index> "player_index";
+<field> "position" "Position" "n__position" <required>;;
+<field> "needs_destroy_to_reach" "boolean" "i__boolean" <required>;;
+
+script_raised_set_tiles_tile
+<basic_type_check> "table" "Tile";
+<has_fields>;
+<field> "name" "string" "i__string" <required>;;
+<field> "position" "Position" "n__position" <required>;;
