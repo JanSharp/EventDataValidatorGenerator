@@ -442,8 +442,8 @@ return {
     --</optional>
       if not game.get_player(value) then
         error{"",
-         {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
-         {"raise-event-protection.field-with-invalid-value-simple", "{{player_index_field_name}}", "player index"},
+          {"raise-event-protection.error-prefix", source_mod_name, "{{event_name}}"},
+          {"raise-event-protection.field-with-invalid-value-simple", "{{player_index_field_name}}", "player index"},
         }
       end
     --<optional>
